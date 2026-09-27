@@ -39,8 +39,8 @@ src/common/view/
 
 src/common/
   ├─ ACPhasorScreenIcons.ts   home / nav icons for all four screens
-  ├─ SimPanel.ts              pre-themed panel (uses ACPhasorColors)
-  ├─ SimButtonOptions.ts      flat button / combo-box option bundles
+  ├─ ACPhasorPanel.ts              pre-themed panel (uses ACPhasorColors)
+  ├─ ACPhasorButtonOptions.ts      flat button / combo-box option bundles
   └─ TimeModel.ts             composable play/pause + elapsed time
 ```
 
@@ -92,4 +92,4 @@ Breaking any of them shows up as the whole screen jittering once per cycle.
    admittance and Q-factor additions there.
 2. Build the Power screen. `WaveformNode`'s multi-trace support covers most of what
    p(t) = v·i needs; shaded regions under a trace do not exist yet.
-3. Replace example preferences (`exampleToggle`) when real prefs exist.
+3. Preferences → Simulation is hidden until the sim has real preferences; `ACPhasorPreferencesModel` / `ACPhasorPreferencesNode` are the empty hooks for them.

@@ -25,17 +25,12 @@ import ACPhasorColors from "./ACPhasorColors.js";
 import { StringManager } from "./i18n/StringManager.js";
 import { IntroScreen } from "./intro/IntroScreen.js";
 import { PowerScreen } from "./power/PowerScreen.js";
-import { ACPhasorPreferencesModel } from "./preferences/ACPhasorPreferencesModel.js";
-import { ACPhasorPreferencesNode } from "./preferences/ACPhasorPreferencesNode.js";
 import { ResonanceScreen } from "./resonance/ResonanceScreen.js";
 import { SeriesRlcScreen } from "./series-rlc/SeriesRlcScreen.js";
 
 onReadyToLaunch(() => {
   const stringManager = StringManager.getInstance();
   const screenNames = stringManager.getScreenNames();
-
-  // Simulation-specific preferences; initial values come from acPhasorQueryParameters.
-  const simPreferences = new ACPhasorPreferencesModel(Tandem.ROOT.createTandem("preferences"));
 
   const screens = [
     new IntroScreen({
@@ -67,13 +62,6 @@ onReadyToLaunch(() => {
         supportsProjectorMode: true,
         // Enables keyboard-navigation highlight outlines
         supportsInteractiveHighlights: true,
-      },
-      simulationOptions: {
-        customPreferences: [
-          {
-            createContent: (tandem: Tandem) => new ACPhasorPreferencesNode(simPreferences, tandem),
-          },
-        ],
       },
       localizationOptions: {
         // Adds a language picker in Preferences → Language

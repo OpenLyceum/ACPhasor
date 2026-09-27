@@ -33,7 +33,7 @@ import { combineOptions, optionize } from "scenerystack/phet-core";
 import { StringUtils } from "scenerystack/phetcommon";
 import { NumberControl, type NumberControlOptions, PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
-import { FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../SimButtonOptions.js";
+import { FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../ACPhasorButtonOptions.js";
 
 export type SimNumberControlSelfOptions = {
   /** Digits after the decimal point in the readout (default 1). */

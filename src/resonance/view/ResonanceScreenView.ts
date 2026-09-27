@@ -44,8 +44,8 @@ import {
   FLAT_RECTANGULAR_BUTTON_OPTIONS,
   FLAT_RESET_ALL_BUTTON_OPTIONS,
   LIGHT_SURFACE_TEXT_FILL,
-} from "../../common/SimButtonOptions.js";
-import { SimPanel } from "../../common/SimPanel.js";
+} from "../../common/ACPhasorButtonOptions.js";
+import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { FrequencyResponseNode } from "../../common/view/FrequencyResponseNode.js";
 import { PhaseArcNode } from "../../common/view/PhaseArcNode.js";
 import { PhasorChainNode } from "../../common/view/PhasorChainNode.js";
@@ -211,7 +211,7 @@ export class ResonanceScreenView extends ScreenView {
       visibleProperty: model.isAtResonanceProperty,
     });
 
-    const readoutPanel = new SimPanel(
+    const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,
@@ -316,7 +316,7 @@ export class ResonanceScreenView extends ScreenView {
       },
     );
 
-    const controlPanel = new SimPanel(
+    const controlPanel = new ACPhasorPanel(
       new VBox({
         align: "center",
         spacing: 12,

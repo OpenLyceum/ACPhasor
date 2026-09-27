@@ -21,8 +21,8 @@ Forked from `SceneryStackTemplate`.
 | `src/resonance/` | Screen 3 — resonance & frequency sweep: |I| and φ vs. log f with peak / half-power band marked, impedance triangle, auto-sweep button |
 | `src/power/` | Screen 4 — power in AC circuits: p(t)=v·i shaded into delivered/returned lobes, power triangle P+jQ=S, power factor |
 | `src/common/ACPhasorScreenIcons.ts` | Home / nav icons for all four screens |
-| `src/common/SimPanel.ts` | Pre-themed `Panel` wrapper (uses `ACPhasorColors` automatically) |
-| `src/common/SimButtonOptions.ts` | Flat button-appearance option bundles + light-control-surface combo-box options |
+| `src/common/ACPhasorPanel.ts` | Pre-themed `Panel` wrapper (uses `ACPhasorColors` automatically) |
+| `src/common/ACPhasorButtonOptions.ts` | Flat button-appearance option bundles + light-control-surface combo-box options |
 | `src/common/TimeModel.ts` | Composable play/pause + elapsed-time model for animated sims |
 | `src/common/model/Phasor.ts` | Immutable AC phasor value object (amplitude/phase over dot `Complex`) |
 | `src/common/model/Impedance.ts` | R/L/C frequency-domain impedances + series & resonance helpers |
@@ -49,15 +49,15 @@ Forked from `SceneryStackTemplate`.
 
 ## Common components
 
-### SimPanel
+### ACPhasorPanel
 
-Every control panel and info box in the sim should use `SimPanel` so that
+Every control panel and info box in the sim should use `ACPhasorPanel` so that
 default/projector color switching is automatic:
 
 ```typescript
-import { SimPanel } from "../../common/SimPanel.js";
-const panel = new SimPanel(content);              // uses ACPhasorColors defaults
-const panel = new SimPanel(content, { xMargin: 20 }); // override any PanelOption
+import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
+const panel = new ACPhasorPanel(content);              // uses ACPhasorColors defaults
+const panel = new ACPhasorPanel(content, { xMargin: 20 }); // override any PanelOption
 ```
 
 ### TimeModel
@@ -83,13 +83,13 @@ Wire the view to `TimeControlNode` from `scenerystack/scenery-phet` binding on
 `listener: () => model.timer.stepForward(1 / 60)` — `step()` ignores dt while paused,
 which is exactly when that button is pressed.
 
-### SimButtonOptions
+### ACPhasorButtonOptions
 
 SceneryStack's push/round buttons default to a 3-D/beveled look; every button in the sim
 should be flat instead. Spread these into the relevant options object:
 
 ```typescript
-import { FLAT_RESET_ALL_BUTTON_OPTIONS, FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../../common/SimButtonOptions.js";
+import { FLAT_RESET_ALL_BUTTON_OPTIONS, FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../../common/ACPhasorButtonOptions.js";
 
 const resetAllButton = new ResetAllButton({ ...FLAT_RESET_ALL_BUTTON_OPTIONS, listener: () => {...} });
 const exampleButton = new RectangularPushButton({ ...FLAT_RECTANGULAR_BUTTON_OPTIONS, content, listener });
@@ -97,7 +97,7 @@ const exampleButton = new RectangularPushButton({ ...FLAT_RECTANGULAR_BUTTON_OPT
 
 `FLAT_PLAY_PAUSE_STEP_BUTTON_OPTIONS` spreads into `TimeControlNode`'s `playPauseStepButtonOptions`;
 `TIME_CONTROL_SPEED_RADIO_OPTIONS` fixes `TimeControlNode`'s speed-radio label color, which
-otherwise defaults to black text on the sim's dark default-mode panels. `SIM_COMBO_BOX_OPTIONS`
+otherwise defaults to black text on the sim's dark default-mode panels. `AC_PHASOR_COMBO_BOX_OPTIONS`
 themes a `ComboBox`'s button/list chrome to the light control surface below; pair item labels
 with `LIGHT_SURFACE_TEXT_FILL` (not `ACPhasorColors.textColorProperty`, which is for panel-fill text).
 

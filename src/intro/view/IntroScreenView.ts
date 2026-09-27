@@ -32,15 +32,15 @@ import {
   SCOPE_PERIODS_SHOWN,
   SCREEN_VIEW_MARGIN,
 } from "../../ACPhasorConstants.js";
-import type { CircuitElementType } from "../../common/model/Impedance.js";
-import { Phasor } from "../../common/model/Phasor.js";
 import {
   FLAT_PLAY_PAUSE_STEP_BUTTON_OPTIONS,
   FLAT_RECTANGULAR_BUTTON_OPTIONS,
   FLAT_RESET_ALL_BUTTON_OPTIONS,
   TIME_CONTROL_SPEED_RADIO_OPTIONS,
-} from "../../common/SimButtonOptions.js";
-import { SimPanel } from "../../common/SimPanel.js";
+} from "../../common/ACPhasorButtonOptions.js";
+import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
+import type { CircuitElementType } from "../../common/model/Impedance.js";
+import { Phasor } from "../../common/model/Phasor.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
 import { createElementSymbol } from "../../common/view/CircuitSymbols.js";
@@ -298,7 +298,7 @@ export class IntroScreenView extends ScreenView {
       },
     );
 
-    const controlPanel = new SimPanel(
+    const controlPanel = new ACPhasorPanel(
       new VBox({
         align: "center",
         spacing: 14,
@@ -315,7 +315,7 @@ export class IntroScreenView extends ScreenView {
       (phaseDifference) => (phaseDifference * 180) / Math.PI,
     );
     this.disposables.push(impedanceMagnitude, phaseDegrees, this.circuit);
-    const readoutPanel = new SimPanel(
+    const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,

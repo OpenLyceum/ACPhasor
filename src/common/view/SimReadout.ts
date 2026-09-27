@@ -3,7 +3,7 @@
  *
  * One "label  value" row for an info panel: a themed label next to a
  * {@link NumberDisplay} badge on the sim's light control surface. Stack several
- * in a `VBox` inside a {@link SimPanel} to build a readout panel.
+ * in a `VBox` inside a {@link ACPhasorPanel} to build a readout panel.
  *
  * ── Usage ─────────────────────────────────────────────────────────────────────
  *

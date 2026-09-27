@@ -36,14 +36,14 @@ import {
   SERIES_SCOPE_SIZE,
   SERIES_VOLTAGE_DIAL_VIEW_RADIUS,
 } from "../../ACPhasorConstants.js";
-import { Phasor } from "../../common/model/Phasor.js";
 import {
   FLAT_PLAY_PAUSE_STEP_BUTTON_OPTIONS,
   FLAT_RECTANGULAR_BUTTON_OPTIONS,
   FLAT_RESET_ALL_BUTTON_OPTIONS,
   TIME_CONTROL_SPEED_RADIO_OPTIONS,
-} from "../../common/SimButtonOptions.js";
-import { SimPanel } from "../../common/SimPanel.js";
+} from "../../common/ACPhasorButtonOptions.js";
+import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
+import { Phasor } from "../../common/model/Phasor.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
 import ConfigurableGraph from "../../common/view/graph/ConfigurableGraph.js";
@@ -337,7 +337,7 @@ export class SeriesRlcScreenView extends ScreenView {
       },
     );
 
-    const controlPanel = new SimPanel(
+    const controlPanel = new ACPhasorPanel(
       new VBox({
         align: "center",
         spacing: 12,
@@ -359,7 +359,7 @@ export class SeriesRlcScreenView extends ScreenView {
       visibleProperty: model.isAtResonanceProperty,
     });
 
-    const readoutPanel = new SimPanel(
+    const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,
