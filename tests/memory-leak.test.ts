@@ -20,11 +20,12 @@ import { Node } from "scenerystack/scenery";
 import { describe, expect, it } from "vitest";
 import ACPhasorColors from "../src/ACPhasorColors.js";
 import { CAPACITANCE_RANGE_F, INDUCTANCE_RANGE_H } from "../src/ACPhasorConstants.js";
+import { ACSourceModel } from "../src/common/model/ACSourceModel.js";
 import { Phasor } from "../src/common/model/Phasor.js";
 import { RlcCircuitModel } from "../src/common/model/RlcCircuitModel.js";
 import { TimeModel } from "../src/common/TimeModel.js";
 import { CircuitDiagramNode } from "../src/common/view/CircuitDiagramNode.js";
-import ConfigurableGraph from "../src/common/view/graph/ConfigurableGraph.js";
+import { ConfigurableGraph } from "../src/common/view/graph/ConfigurableGraph.js";
 import type { PlottableProperty } from "../src/common/view/graph/PlottableProperty.js";
 import { InductorNode } from "../src/common/view/InductorNode.js";
 import { PhaseArcNode } from "../src/common/view/PhaseArcNode.js";
@@ -36,27 +37,7 @@ import { IntroModel } from "../src/intro/model/IntroModel.js";
 import { PowerModel } from "../src/power/model/PowerModel.js";
 import { ResonanceModel } from "../src/resonance/model/ResonanceModel.js";
 import { SeriesRlcModel } from "../src/series-rlc/model/SeriesRlcModel.js";
-
-/**
- * Force garbage collection with multiple passes. When `earlyExitRefs` is supplied
- * the loop bails as soon as every referenced object is confirmed collected. The
- * setTimeout(0) yield after a live deref() avoids the WeakRef macrotask-liveness pin.
- * Without early-exit refs the loop always runs all passes, which on a slow `gc()`
- * can exceed the Vitest testTimeout — always pass refs when you have them.
- */
-async function forceGC(earlyExitRefs?: WeakRef<object> | readonly WeakRef<object>[]): Promise<void> {
-  const refs = earlyExitRefs === undefined ? [] : Array.isArray(earlyExitRefs) ? earlyExitRefs : [earlyExitRefs];
-  for (let i = 0; i < 15; i++) {
-    globalThis.gc?.();
-    await new Promise<void>((r) => setTimeout(r, 50));
-    if (refs.length > 0 && refs.every((ref) => ref.deref() === undefined)) {
-      return;
-    }
-    if (refs.length > 0) {
-      await new Promise<void>((r) => setTimeout(r, 0));
-    }
-  }
-}
+import { describeDisposalLeaks, forceGC } from "./helpers/memoryLeak.js";
 
 function createAndDisposeTimeModel(): WeakRef<object> {
   const model = new TimeModel();
@@ -95,16 +76,6 @@ function listenerCount<T>(property: TReadOnlyProperty<T>): number {
 }
 
 describe("Memory leak regression", () => {
-  it("global.gc is available (--expose-gc)", () => {
-    expect(globalThis.gc).toBeDefined();
-  });
-
-  it("sanity: plain object is collected", async () => {
-    const ref = (() => new WeakRef({ hello: "world" }))();
-    await forceGC(ref);
-    expect(ref.deref()).toBeUndefined();
-  });
-
   it("TimeModel is collected after dispose", async () => {
     const ref = createAndDisposeTimeModel();
     await forceGC(ref);
@@ -398,3 +369,16 @@ describe("Memory leak regression", () => {
     });
   });
 });
+
+describeDisposalLeaks([
+  { name: "IntroModel", create: () => new IntroModel() },
+  { name: "PowerModel", create: () => new PowerModel() },
+  { name: "ResonanceModel", create: () => new ResonanceModel() },
+  { name: "SeriesRlcModel", create: () => new SeriesRlcModel() },
+  { name: "TimeModel", create: () => new TimeModel(), idempotentDispose: true },
+  { name: "ACSourceModel", create: () => new ACSourceModel() },
+  { name: "RlcCircuitModel", create: () => new RlcCircuitModel() },
+  { name: "CircuitDiagramNode", create: () => new CircuitDiagramNode() },
+  { name: "InductorNode", create: () => new InductorNode() },
+  { name: "ResistorNode", create: () => new ResistorNode() },
+]);

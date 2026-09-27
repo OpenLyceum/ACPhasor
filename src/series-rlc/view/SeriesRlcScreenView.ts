@@ -46,7 +46,7 @@ import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { Phasor } from "../../common/model/Phasor.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
-import ConfigurableGraph from "../../common/view/graph/ConfigurableGraph.js";
+import { ConfigurableGraph } from "../../common/view/graph/ConfigurableGraph.js";
 import type { PlottableProperty } from "../../common/view/graph/PlottableProperty.js";
 import { PhaseArcNode } from "../../common/view/PhaseArcNode.js";
 import { PhasorChainNode } from "../../common/view/PhasorChainNode.js";
