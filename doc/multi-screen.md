@@ -1,8 +1,6 @@
 # Multi-Screen Simulations
 
-This template ships as a **single-screen** simulation. Many physics simulations
-expose multiple conceptual modes — "Intro" + "Lab", "Basics" + "Advanced", etc.
-This guide shows how to extend the template to two or more screens.
+AC Phasor already has four screens under `src/intro/`, `src/series-rlc/`, `src/resonance/`, and `src/power/`. To add another, follow the current fleet guide in [SceneryStackTemplate `doc/multi-screen.md`](https://github.com/OpenLyceum/SceneryStackTemplate/blob/main/doc/multi-screen.md). `npm run scaffold-screens` lives in that template. The steps below are the older hand procedure; mirror an existing screen folder here.
 
 ---
 
@@ -83,7 +81,7 @@ public getScreenNames(): {
 
 ### 3 — Create the second screen folder
 
-Mirror the structure of `src/ac-phasor-screen/`:
+Mirror the structure of `src/intro/`:
 
 ```
 src/
