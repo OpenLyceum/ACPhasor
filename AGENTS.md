@@ -47,7 +47,7 @@ Forked from `SceneryStackTemplate`.
 | `src/common/view/ACSourceNode.ts` | AC source body with live terminal polarity marks |
 | `scripts/generate-icons.ts` | PNG icons from `public/icons/icon.svg` |
 
-## Common components
+### Common components
 
 ### ACPhasorPanel
 
@@ -324,6 +324,20 @@ line, so they can be dropped into a button, a wire run, or an icon canvas by
 translation alone. Keep the a11y name on the button: the glyph carries the meaning
 visually, the string carries it to the PDOM.
 
+## Model
+
+### Multi-screen sims
+
+Full guide: [SceneryStackTemplate `doc/multi-screen.md`](https://github.com/OpenLyceum/SceneryStackTemplate/blob/main/doc/multi-screen.md)
+
+Summary:
+- Create a new screen folder mirroring `src/intro/` for each screen
+- Add screen-name keys to all locale JSON files
+- Expose new `StringProperty` getters in `StringManager.getScreenNames()`
+- For shared state, create a root model passed to each per-screen model
+- Add factories to `src/common/ACPhasorScreenIcons.ts`; wire `homeScreenIcon` + `navigationBarIcon` on each Screen
+- Register all screens in the `screens` array in `main.ts`
+
 ## Accessibility
 
 This template is the **canonical accessibility reference** for OpenLyceum sims. It ships with
@@ -415,18 +429,8 @@ npm run lint && npm run check && npm run build && npm test
 | `npm run test:fuzz:quick` | 10s fuzz |
 | `npm run icons` | Regenerate PWA icons |
 
-## Multi-screen sims
+## Development notes
 
-Full guide: [SceneryStackTemplate `doc/multi-screen.md`](https://github.com/OpenLyceum/SceneryStackTemplate/blob/main/doc/multi-screen.md)
-
-Summary:
-- Create a new screen folder mirroring `src/intro/` for each screen
-- Add screen-name keys to all locale JSON files
-- Expose new `StringProperty` getters in `StringManager.getScreenNames()`
-- For shared state, create a root model passed to each per-screen model
-- Add factories to `src/common/ACPhasorScreenIcons.ts`; wire `homeScreenIcon` + `navigationBarIcon` on each Screen
-- Register all screens in the `screens` array in `main.ts`
-
-## PWA
+### PWA
 
 After `npm run build`, the sim is installable offline via Workbox (`dist/manifest.webmanifest`).
