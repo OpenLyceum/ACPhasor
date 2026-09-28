@@ -34,21 +34,25 @@ onReadyToLaunch(() => {
 
   const screens = [
     new IntroScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.introStringProperty,
       tandem: Tandem.ROOT.createTandem("introScreen"),
       backgroundColorProperty: ACPhasorColors.backgroundColorProperty,
     }),
     new SeriesRlcScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.seriesRlcStringProperty,
       tandem: Tandem.ROOT.createTandem("seriesRlcScreen"),
       backgroundColorProperty: ACPhasorColors.backgroundColorProperty,
     }),
     new ResonanceScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.resonanceStringProperty,
       tandem: Tandem.ROOT.createTandem("resonanceScreen"),
       backgroundColorProperty: ACPhasorColors.backgroundColorProperty,
     }),
     new PowerScreen({
+      // The screen name Property updates automatically when the locale changes
       name: screenNames.powerStringProperty,
       tandem: Tandem.ROOT.createTandem("powerScreen"),
       backgroundColorProperty: ACPhasorColors.backgroundColorProperty,
