@@ -36,8 +36,8 @@ Forked from `SceneryStackTemplate`.
 | `src/common/view/FrequencyResponseNode.ts` | Bamboo chart of a quantity vs. *frequency* on a log axis, with operating-point marker, f₀ line and half-power band |
 | `src/common/view/axisScale.ts` | The 1–2–5 `niceStep` / `formatTickValue` pair both charts scale their axes with |
 | `src/common/view/graph/ConfigurableGraph.ts` | Draggable/resizable/zoomable Y-vs-X explorer (ported from Resonance): user picks each axis via combo box, plot auto-scales with a fading trail. `step()` feeds it one sample per frame via `addDataPoint()`. Sibling files: `PlottableProperty`, `GraphDataManager`, `GraphControlsPanel`, `GraphInteractionHandler` |
-| `src/common/view/SimNumberControl.ts` | Pre-themed `NumberControl` (dark-panel title + light value badge + units pattern); `logarithmic` for decade-spanning ranges |
-| `src/common/view/SimReadout.ts` | One "label + value badge" row for info panels |
+| `src/common/view/ACPhasorNumberControl.ts` | Pre-themed `NumberControl` (dark-panel title + light value badge + units pattern); `logarithmic` for decade-spanning ranges |
+| `src/common/view/ACPhasorReadout.ts` | One "label + value badge" row for info panels |
 | `src/common/view/CircuitDiagramNode.ts` | Pictorial single-loop circuit: wire, source, element slots, flowing charge |
 | `src/common/view/CircuitElementNode.ts` | Base class for the pictorial elements (terminal convention) |
 | `src/common/view/CircuitSymbols.ts` | Schematic R / L / C glyphs shared by the element picker and the screen icons |
@@ -235,7 +235,7 @@ below that.
 
 Physics defaults and ranges (amplitude, frequency, R/L/C) live in `ACPhasorConstants.ts`.
 The frequency range spans 2.4 decades, so its control is built with
-`SimNumberControl`'s `logarithmic: true` — the slider then divides the range by ratio
+`ACPhasorNumberControl`'s `logarithmic: true` — the slider then divides the range by ratio
 rather than by difference, and the sub-hertz region where every resonance lives gets as
 much travel as the top end.
 
@@ -394,7 +394,7 @@ Fleet-standard Vitest layout (keep when forking):
 | `tests/PowerModel.test.ts` | P/Q/S, power factor, and P as the *numerically integrated* average of v·i |
 | `tests/WaveformNode.test.ts` | Frozen footprint under rescale / retune, independent y-axes, offset + shaded traces |
 | `tests/FrequencyResponseNode.test.ts` | Frozen footprint under curve rescale, marker travel, band and non-finite samples |
-| `tests/SimNumberControl.test.ts` | The logarithmic-slider bridge, including both ends of the range |
+| `tests/ACPhasorNumberControl.test.ts` | The logarithmic-slider bridge, including both ends of the range |
 | `tests/memory-leak.test.ts` | WeakRef + `forceGC` dispose regression for every screen model, plus listener-detach checks for the view nodes that link model Properties |
 | `tests/fuzz/fuzz.spec.ts` | Optional Playwright fuzz smoke via joist `?fuzz` |
 | `playwright.config.ts` | Chromium project + Vite webServer for fuzz |

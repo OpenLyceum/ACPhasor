@@ -312,6 +312,59 @@ const ACPhasorColors = {
     default: "#4fc3f7",
     projector: "#0d47a1",
   }),
+
+  // ── EIA resistor color code ─────────────────────────────────────────────────
+  // Physical band colors. They stay the same in projector mode so the code a
+  // student reads on the part matches a real resistor.
+
+  resistorDigit0ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit0", {
+    default: "#1c1c1c",
+    projector: "#1c1c1c",
+  }),
+  resistorDigit1ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit1", {
+    default: "#6d4c41",
+    projector: "#6d4c41",
+  }),
+  resistorDigit2ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit2", {
+    default: "#e53935",
+    projector: "#e53935",
+  }),
+  resistorDigit3ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit3", {
+    default: "#fb8c00",
+    projector: "#fb8c00",
+  }),
+  resistorDigit4ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit4", {
+    default: "#fdd835",
+    projector: "#fdd835",
+  }),
+  resistorDigit5ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit5", {
+    default: "#43a047",
+    projector: "#43a047",
+  }),
+  resistorDigit6ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit6", {
+    default: "#1e88e5",
+    projector: "#1e88e5",
+  }),
+  resistorDigit7ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit7", {
+    default: "#8e24aa",
+    projector: "#8e24aa",
+  }),
+  resistorDigit8ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit8", {
+    default: "#9e9e9e",
+    projector: "#9e9e9e",
+  }),
+  resistorDigit9ColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorDigit9", {
+    default: "#fafafa",
+    projector: "#fafafa",
+  }),
+  resistorGoldBandColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorGoldBand", {
+    default: "#d4af37",
+    projector: "#d4af37",
+  }),
+  resistorSilverBandColorProperty: new ProfileColorProperty(ACPhasorNamespace, "resistorSilverBand", {
+    default: "#c0c0c0",
+    projector: "#c0c0c0",
+  }),
 };
 
 export default ACPhasorColors;

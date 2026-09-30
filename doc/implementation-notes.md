@@ -34,8 +34,8 @@ src/common/view/
   ├─ CircuitDiagramNode.ts    pictorial loop with flowing charge
   ├─ ResistorNode / InductorNode / CapacitorNode / ACSourceNode
   ├─ CircuitSymbols.ts        schematic R / L / C glyphs
-  ├─ SimNumberControl.ts      pre-themed NumberControl, linear or logarithmic
-  └─ SimReadout.ts            one "label + value badge" row
+  ├─ ACPhasorNumberControl.ts      pre-themed NumberControl, linear or logarithmic
+  └─ ACPhasorReadout.ts            one "label + value badge" row
 
 src/common/
   ├─ ACPhasorScreenIcons.ts   home / nav icons for all four screens

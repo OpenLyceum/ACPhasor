@@ -1,5 +1,5 @@
 /**
- * SimReadout.ts
+ * ACPhasorReadout.ts
  *
  * One "label  value" row for an info panel: a themed label next to a
  * {@link NumberDisplay} badge on the sim's light control surface. Stack several
@@ -7,7 +7,7 @@
  *
  * ── Usage ─────────────────────────────────────────────────────────────────────
  *
- *   new SimReadout( labels.impedanceStringProperty, impedanceProperty,
+ *   new ACPhasorReadout( labels.impedanceStringProperty, impedanceProperty,
  *                   labels.ohmsPatternStringProperty, new Range( 0, 1000 ), 1 );
  */
 
@@ -17,7 +17,7 @@ import { HBox, Text } from "scenerystack/scenery";
 import { NumberDisplay, PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
 
-export class SimReadout extends HBox {
+export class ACPhasorReadout extends HBox {
   public constructor(
     label: TReadOnlyProperty<string>,
     numberProperty: TReadOnlyProperty<number>,

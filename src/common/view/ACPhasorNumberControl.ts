@@ -1,5 +1,5 @@
 /**
- * SimNumberControl.ts
+ * ACPhasorNumberControl.ts
  *
  * A pre-themed {@link NumberControl} for the sim's dark panels: the title reads
  * in the panel text color, the value badge sits on the light control surface,
@@ -18,7 +18,7 @@
  *
  * ── Usage ─────────────────────────────────────────────────────────────────────
  *
- *   const control = new SimNumberControl(
+ *   const control = new ACPhasorNumberControl(
  *     labels.resistanceStringProperty,
  *     model.resistanceProperty,
  *     RESISTANCE_RANGE_OHMS,
@@ -28,14 +28,14 @@
  */
 
 import { NumberProperty, type PhetioProperty, type TReadOnlyProperty } from "scenerystack/axon";
-import { Range } from "scenerystack/dot";
+import { Range, toFixed } from "scenerystack/dot";
 import { combineOptions, optionize } from "scenerystack/phet-core";
 import { StringUtils } from "scenerystack/phetcommon";
 import { NumberControl, type NumberControlOptions, PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
 import { FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../ACPhasorButtonOptions.js";
 
-export type SimNumberControlSelfOptions = {
+export type ACPhasorNumberControlSelfOptions = {
   /** Digits after the decimal point in the readout (default 1). */
   decimalPlaces?: number;
   /**
@@ -48,9 +48,9 @@ export type SimNumberControlSelfOptions = {
   logarithmic?: boolean;
 };
 
-export type SimNumberControlOptions = SimNumberControlSelfOptions & NumberControlOptions;
+export type ACPhasorNumberControlOptions = ACPhasorNumberControlSelfOptions & NumberControlOptions;
 
-export class SimNumberControl extends NumberControl {
+export class ACPhasorNumberControl extends NumberControl {
   /** The log-space Property backing the slider, or null for a linear control. */
   private readonly logProperty: NumberProperty | null;
   private readonly detachLogBridge: (() => void) | null;
@@ -60,9 +60,9 @@ export class SimNumberControl extends NumberControl {
     numberProperty: PhetioProperty<number>,
     range: Range,
     valuePattern: TReadOnlyProperty<string>,
-    providedOptions?: SimNumberControlOptions,
+    providedOptions?: ACPhasorNumberControlOptions,
   ) {
-    const options = optionize<SimNumberControlOptions, SimNumberControlSelfOptions, NumberControlOptions>()(
+    const options = optionize<ACPhasorNumberControlOptions, ACPhasorNumberControlSelfOptions, NumberControlOptions>()(
       {
         decimalPlaces: 1,
         logarithmic: false,
@@ -83,7 +83,7 @@ export class SimNumberControl extends NumberControl {
       ? {
           numberFormatter: (logValue: number): string =>
             StringUtils.fillIn(valuePattern.value, {
-              value: (10 ** logValue).toFixed(decimalPlaces),
+              value: toFixed(10 ** logValue, decimalPlaces),
             }),
           numberFormatterDependencies: [valuePattern],
         }

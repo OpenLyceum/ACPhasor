@@ -49,12 +49,12 @@ import {
 } from "../../common/ACPhasorButtonOptions.js";
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
+import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
+import { ACPhasorReadout } from "../../common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
 import { PhaseArcNode } from "../../common/view/PhaseArcNode.js";
 import { PhasorChainNode } from "../../common/view/PhasorChainNode.js";
 import { PhasorDiagramNode } from "../../common/view/PhasorDiagramNode.js";
-import { SimNumberControl } from "../../common/view/SimNumberControl.js";
-import { SimReadout } from "../../common/view/SimReadout.js";
 import { WaveformNode } from "../../common/view/WaveformNode.js";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { PowerModel } from "../model/PowerModel.js";
@@ -274,35 +274,35 @@ export class PowerScreenView extends ScreenView {
         align: "left",
         spacing: 8,
         children: [
-          new SimReadout(
+          new ACPhasorReadout(
             labels.realPowerStringProperty,
             model.realPowerProperty,
             labels.wattsPatternStringProperty,
             new Range(0, 1000),
             2,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.reactivePowerStringProperty,
             model.reactivePowerProperty,
             labels.reactivePowerPatternStringProperty,
             new Range(-1000, 1000),
             2,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.apparentPowerStringProperty,
             model.apparentPowerProperty,
             labels.voltAmperesPatternStringProperty,
             new Range(0, 1000),
             2,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.powerFactorStringProperty,
             model.powerFactorProperty,
             labels.plainPatternStringProperty,
             new Range(-1, 1),
             3,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.phaseStringProperty,
             phaseDegrees,
             labels.degreesPatternStringProperty,
@@ -317,35 +317,35 @@ export class PowerScreenView extends ScreenView {
     readoutPanel.top = triangleColumn.bottom + 16;
 
     // ── Control panel ───────────────────────────────────────────────────────
-    const resistanceControl = new SimNumberControl(
+    const resistanceControl = new ACPhasorNumberControl(
       labels.resistanceStringProperty,
       circuit.resistanceProperty,
       RESISTANCE_RANGE_OHMS,
       labels.ohmsPatternStringProperty,
       { decimalPlaces: 0, accessibleName: a11y.controls.resistanceStringProperty },
     );
-    const inductanceControl = new SimNumberControl(
+    const inductanceControl = new ACPhasorNumberControl(
       labels.inductanceStringProperty,
       circuit.inductanceProperty,
       INDUCTANCE_RANGE_H,
       labels.henriesPatternStringProperty,
       { decimalPlaces: 1, accessibleName: a11y.controls.inductanceStringProperty },
     );
-    const capacitanceControl = new SimNumberControl(
+    const capacitanceControl = new ACPhasorNumberControl(
       labels.capacitanceStringProperty,
       circuit.capacitanceProperty,
       CAPACITANCE_RANGE_F,
       labels.faradsPatternStringProperty,
       { decimalPlaces: 1, accessibleName: a11y.controls.capacitanceStringProperty },
     );
-    const sourceVoltageControl = new SimNumberControl(
+    const sourceVoltageControl = new ACPhasorNumberControl(
       labels.sourceVoltageStringProperty,
       circuit.source.amplitudeProperty,
       AC_AMPLITUDE_RANGE_V,
       labels.voltsPatternStringProperty,
       { decimalPlaces: 1, accessibleName: a11y.controls.sourceVoltageStringProperty },
     );
-    const frequencyControl = new SimNumberControl(
+    const frequencyControl = new ACPhasorNumberControl(
       labels.frequencyStringProperty,
       circuit.source.frequencyProperty,
       AC_FREQUENCY_RANGE_HZ,

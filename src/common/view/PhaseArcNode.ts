@@ -23,7 +23,7 @@
  */
 
 import { Multilink, type TReadOnlyProperty } from "scenerystack/axon";
-import { Vector2 } from "scenerystack/dot";
+import { toFixed, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
@@ -116,7 +116,7 @@ export class PhaseArcNode extends Node {
 
       if (labelNode) {
         const degrees = (sweep * 180) / Math.PI;
-        labelNode.string = `${degrees > 0 ? "+" : ""}${degrees.toFixed(0)}°`;
+        labelNode.string = `${degrees > 0 ? "+" : ""}${toFixed(degrees, 0)}°`;
         // Sit just outside the middle of the wedge, where it clears both arrows.
         labelNode.center = viewOrigin.plus(
           new Vector2(

@@ -45,6 +45,8 @@ import {
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { Phasor } from "../../common/model/Phasor.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
+import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
+import { ACPhasorReadout } from "../../common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
 import { ConfigurableGraph } from "../../common/view/graph/ConfigurableGraph.js";
 import type { PlottableProperty } from "../../common/view/graph/PlottableProperty.js";
@@ -52,8 +54,6 @@ import { PhaseArcNode } from "../../common/view/PhaseArcNode.js";
 import { PhasorChainNode } from "../../common/view/PhasorChainNode.js";
 import { PhasorDiagramNode } from "../../common/view/PhasorDiagramNode.js";
 import { PhasorNode } from "../../common/view/PhasorNode.js";
-import { SimNumberControl } from "../../common/view/SimNumberControl.js";
-import { SimReadout } from "../../common/view/SimReadout.js";
 import { WaveformNode } from "../../common/view/WaveformNode.js";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { SeriesRlcModel } from "../model/SeriesRlcModel.js";
@@ -295,28 +295,28 @@ export class SeriesRlcScreenView extends ScreenView {
     this.scope.top = tipToTailCheckbox.bottom + 26;
 
     // ── Control panel ───────────────────────────────────────────────────────
-    const resistanceControl = new SimNumberControl(
+    const resistanceControl = new ACPhasorNumberControl(
       labels.resistanceStringProperty,
       model.resistanceProperty,
       RESISTANCE_RANGE_OHMS,
       labels.ohmsPatternStringProperty,
       { decimalPlaces: 0, accessibleName: a11y.controls.resistanceStringProperty },
     );
-    const inductanceControl = new SimNumberControl(
+    const inductanceControl = new ACPhasorNumberControl(
       labels.inductanceStringProperty,
       model.inductanceProperty,
       INDUCTANCE_RANGE_H,
       labels.henriesPatternStringProperty,
       { decimalPlaces: 1, accessibleName: a11y.controls.inductanceStringProperty },
     );
-    const capacitanceControl = new SimNumberControl(
+    const capacitanceControl = new ACPhasorNumberControl(
       labels.capacitanceStringProperty,
       model.capacitanceProperty,
       CAPACITANCE_RANGE_F,
       labels.faradsPatternStringProperty,
       { decimalPlaces: 1, accessibleName: a11y.controls.capacitanceStringProperty },
     );
-    const sourceVoltageControl = new SimNumberControl(
+    const sourceVoltageControl = new ACPhasorNumberControl(
       labels.sourceVoltageStringProperty,
       model.source.amplitudeProperty,
       AC_AMPLITUDE_RANGE_V,
@@ -325,7 +325,7 @@ export class SeriesRlcScreenView extends ScreenView {
     );
     // Logarithmic: resonance for most L–C combinations sits below 1 Hz, and on a
     // linear track that whole region would be the first fifth of the travel.
-    const frequencyControl = new SimNumberControl(
+    const frequencyControl = new ACPhasorNumberControl(
       labels.frequencyStringProperty,
       model.source.frequencyProperty,
       AC_FREQUENCY_RANGE_HZ,
@@ -364,28 +364,28 @@ export class SeriesRlcScreenView extends ScreenView {
         align: "left",
         spacing: 8,
         children: [
-          new SimReadout(
+          new ACPhasorReadout(
             labels.impedanceStringProperty,
             impedanceMagnitude,
             labels.ohmsPatternStringProperty,
             new Range(0, 1000),
             1,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.reactanceStringProperty,
             model.reactanceProperty,
             labels.ohmsPatternStringProperty,
             new Range(-1000, 1000),
             1,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.phaseStringProperty,
             phaseDegrees,
             labels.degreesPatternStringProperty,
             new Range(-90, 90),
             0,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.resonantFrequencyStringProperty,
             model.resonantFrequencyProperty,
             labels.hertzPatternStringProperty,

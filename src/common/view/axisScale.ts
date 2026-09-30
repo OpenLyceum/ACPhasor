@@ -12,6 +12,8 @@
  * does move; continuous scaling would leave the ticks twitching at every frame.
  */
 
+import { toFixedNumber } from "scenerystack/dot";
+
 /**
  * Round a positive value up to the next entry of the 1–2–5 sequence
  * (…, 0.2, 0.5, 1, 2, 5, 10, …). Used both for auto-scaled full scales and for
@@ -58,5 +60,5 @@ export function applyChartRescale(
  */
 export function formatTickValue(value: number, spacing: number): string {
   const decimals = Math.max(0, Math.min(6, Math.ceil(-Math.log10(spacing)) + 1));
-  return Number(value.toFixed(decimals)).toString();
+  return toFixedNumber(value, decimals).toString();
 }

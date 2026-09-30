@@ -42,30 +42,32 @@ type ResistorNodeSelfOptions = {
 
 export type ResistorNodeOptions = ResistorNodeSelfOptions;
 
-/** EIA band colors for digits 0–9. */
+/** EIA band colors for digits 0–9, from the sim color profile. */
 const DIGIT_BAND_COLORS = [
-  "#1c1c1c", // 0 black
-  "#6d4c41", // 1 brown
-  "#e53935", // 2 red
-  "#fb8c00", // 3 orange
-  "#fdd835", // 4 yellow
-  "#43a047", // 5 green
-  "#1e88e5", // 6 blue
-  "#8e24aa", // 7 violet
-  "#9e9e9e", // 8 gray
-  "#fafafa", // 9 white
+  ACPhasorColors.resistorDigit0ColorProperty,
+  ACPhasorColors.resistorDigit1ColorProperty,
+  ACPhasorColors.resistorDigit2ColorProperty,
+  ACPhasorColors.resistorDigit3ColorProperty,
+  ACPhasorColors.resistorDigit4ColorProperty,
+  ACPhasorColors.resistorDigit5ColorProperty,
+  ACPhasorColors.resistorDigit6ColorProperty,
+  ACPhasorColors.resistorDigit7ColorProperty,
+  ACPhasorColors.resistorDigit8ColorProperty,
+  ACPhasorColors.resistorDigit9ColorProperty,
 ] as const;
 
-const GOLD_BAND_COLOR = "#d4af37";
-const SILVER_BAND_COLOR = "#c0c0c0";
+const GOLD_BAND_COLOR = ACPhasorColors.resistorGoldBandColorProperty;
+const SILVER_BAND_COLOR = ACPhasorColors.resistorSilverBandColorProperty;
 
 /** The color for one digit band, defensive against out-of-range input. */
-function digitColor(digit: number): string {
+function digitColor(digit: number): (typeof DIGIT_BAND_COLORS)[number] {
   return DIGIT_BAND_COLORS[Math.max(0, Math.min(9, digit))] ?? DIGIT_BAND_COLORS[0];
 }
 
 /** The multiplier band color for 10^exponent (gold/silver for negative decades). */
-function multiplierColor(exponent: number): string {
+function multiplierColor(
+  exponent: number,
+): (typeof DIGIT_BAND_COLORS)[number] | typeof GOLD_BAND_COLOR | typeof SILVER_BAND_COLOR {
   if (exponent === -1) {
     return GOLD_BAND_COLOR;
   }
@@ -79,7 +81,9 @@ function multiplierColor(exponent: number): string {
  * The three value bands for a resistance: two significant digits and the decade
  * multiplier, e.g. 47 Ω → yellow, violet, black.
  */
-function bandColorsFor(resistance: number): [string, string, string] {
+type BandColor = (typeof DIGIT_BAND_COLORS)[number] | typeof GOLD_BAND_COLOR | typeof SILVER_BAND_COLOR;
+
+function bandColorsFor(resistance: number): [BandColor, BandColor, BandColor] {
   if (!(resistance > 0)) {
     return [digitColor(0), digitColor(0), digitColor(0)];
   }

@@ -17,6 +17,7 @@
     "frequency": "Fréquence",
     "voltage": "Tension",
     "current": "Courant",
+    "currentSymbol": "i",
     "impedance": "Impédance",
     "reactance": "Réactance",
     "phase": "Phase",

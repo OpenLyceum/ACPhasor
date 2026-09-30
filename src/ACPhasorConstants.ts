@@ -47,7 +47,7 @@ export const AC_FREQUENCY_DEFAULT_HZ = 1;
  * corner, which lands a hair below it.
  *
  * The span is 2.4 decades, so the frequency control is drawn with a logarithmic
- * slider (see SimNumberControl's `logarithmic` option); a linear one would spend
+ * slider (see ACPhasorNumberControl's `logarithmic` option); a linear one would spend
  * most of its travel above 1 Hz, where nothing interesting happens.
  */
 export const AC_FREQUENCY_RANGE_HZ = new Range(0.02, 5);

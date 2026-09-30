@@ -1,5 +1,5 @@
 /**
- * SimNumberControl.test.ts
+ * ACPhasorNumberControl.test.ts
  *
  * Covers the logarithmic-slider bridge. The control drives an intermediate
  * log-space Property, and the round trip through 10^log₁₀(x) is not exact, so the
@@ -11,12 +11,12 @@ import { NumberProperty, StringProperty } from "scenerystack/axon";
 import { Range } from "scenerystack/dot";
 import { describe, expect, it } from "vitest";
 import { AC_FREQUENCY_RANGE_HZ } from "../src/ACPhasorConstants.js";
-import { SimNumberControl } from "../src/common/view/SimNumberControl.js";
+import { ACPhasorNumberControl } from "../src/common/view/ACPhasorNumberControl.js";
 
-describe("SimNumberControl", () => {
+describe("ACPhasorNumberControl", () => {
   it("builds a linear control", () => {
     const resistanceProperty = new NumberProperty(10, { range: new Range(1, 100) });
-    const control = new SimNumberControl(
+    const control = new ACPhasorNumberControl(
       new StringProperty("Resistance"),
       resistanceProperty,
       new Range(1, 100),
@@ -33,7 +33,7 @@ describe("SimNumberControl", () => {
   describe("logarithmic", () => {
     it("holds the model value through a round trip, including at both ends", () => {
       const frequencyProperty = new NumberProperty(1, { range: AC_FREQUENCY_RANGE_HZ });
-      const control = new SimNumberControl(
+      const control = new ACPhasorNumberControl(
         new StringProperty("Frequency"),
         frequencyProperty,
         AC_FREQUENCY_RANGE_HZ,
@@ -51,7 +51,7 @@ describe("SimNumberControl", () => {
 
     it("follows a reset of the model Property", () => {
       const frequencyProperty = new NumberProperty(1, { range: AC_FREQUENCY_RANGE_HZ });
-      const control = new SimNumberControl(
+      const control = new ACPhasorNumberControl(
         new StringProperty("Frequency"),
         frequencyProperty,
         AC_FREQUENCY_RANGE_HZ,
@@ -69,7 +69,7 @@ describe("SimNumberControl", () => {
     it("falls back to a linear slider when the range reaches zero", () => {
       // log₁₀(0) is undefined, so a range starting at zero has to stay linear.
       const amplitudeProperty = new NumberProperty(5, { range: new Range(0, 10) });
-      const control = new SimNumberControl(
+      const control = new ACPhasorNumberControl(
         new StringProperty("Amplitude"),
         amplitudeProperty,
         new Range(0, 10),

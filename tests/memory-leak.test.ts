@@ -24,6 +24,7 @@ import { ACSourceModel } from "../src/common/model/ACSourceModel.js";
 import { Phasor } from "../src/common/model/Phasor.js";
 import { RlcCircuitModel } from "../src/common/model/RlcCircuitModel.js";
 import { TimeModel } from "../src/common/TimeModel.js";
+import { ACPhasorNumberControl } from "../src/common/view/ACPhasorNumberControl.js";
 import { CircuitDiagramNode } from "../src/common/view/CircuitDiagramNode.js";
 import { ConfigurableGraph } from "../src/common/view/graph/ConfigurableGraph.js";
 import type { PlottableProperty } from "../src/common/view/graph/PlottableProperty.js";
@@ -32,7 +33,6 @@ import { PhaseArcNode } from "../src/common/view/PhaseArcNode.js";
 import { PhasorChainNode } from "../src/common/view/PhasorChainNode.js";
 import { PhasorNode } from "../src/common/view/PhasorNode.js";
 import { ResistorNode } from "../src/common/view/ResistorNode.js";
-import { SimNumberControl } from "../src/common/view/SimNumberControl.js";
 import { IntroModel } from "../src/intro/model/IntroModel.js";
 import { PowerModel } from "../src/power/model/PowerModel.js";
 import { ResonanceModel } from "../src/resonance/model/ResonanceModel.js";
@@ -348,12 +348,12 @@ describe("Memory leak regression", () => {
       expect(listenerCount(ACPhasorColors.panelBackgroundColorProperty)).toBe(before);
     });
 
-    it("a logarithmic SimNumberControl unbridges from its model Property", () => {
+    it("a logarithmic ACPhasorNumberControl unbridges from its model Property", () => {
       // The log bridge links the model Property in both directions. Left in
       // place it would go on writing 10^(slider) back into the model after the
       // screen holding it was gone.
       const frequencyProperty = new Property(1);
-      const control = new SimNumberControl(
+      const control = new ACPhasorNumberControl(
         new StringProperty("Frequency"),
         frequencyProperty,
         new Range(0.02, 5),

@@ -48,7 +48,7 @@
  */
 
 import { DerivedProperty, type TReadOnlyProperty } from "scenerystack/axon";
-import { type Range, Vector2 } from "scenerystack/dot";
+import { type Range, toFixed, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Circle, Node, Path, type TColor, Text } from "scenerystack/scenery";
@@ -60,6 +60,7 @@ import {
   INDUCTANCE_RANGE_H,
   INDUCTOR_SATURATION_EMF_V,
 } from "../../ACPhasorConstants.js";
+import { StringManager } from "../../i18n/StringManager.js";
 import type { CircuitElementType } from "../model/Impedance.js";
 import type { Phasor } from "../model/Phasor.js";
 import { ACSourceNode } from "./ACSourceNode.js";
@@ -378,7 +379,7 @@ export class CircuitDiagramNode extends Node {
     );
     this.addChild(this.currentArrow);
     this.addChild(
-      new Text("i", {
+      new Text(StringManager.getInstance().getLabels().currentSymbolStringProperty, {
         font: "italic 13px sans-serif",
         fill: wireColor,
         left: this.arrowCenterX + CURRENT_ARROW_LENGTH / 2 + 6,
@@ -518,7 +519,7 @@ export class CircuitDiagramNode extends Node {
    */
   private updateSegments(): void {
     const active = this.blockingSpans.filter((span) => span.isActive());
-    const key = active.map((span) => span.start.toFixed(1)).join("|");
+    const key = active.map((span) => toFixed(span.start, 1)).join("|");
     if (key === this.segmentKey) {
       return;
     }

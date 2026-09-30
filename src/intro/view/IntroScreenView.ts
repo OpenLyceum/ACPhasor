@@ -42,13 +42,13 @@ import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import type { CircuitElementType } from "../../common/model/Impedance.js";
 import { Phasor } from "../../common/model/Phasor.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
+import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
+import { ACPhasorReadout } from "../../common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
 import { createElementSymbol } from "../../common/view/CircuitSymbols.js";
 import { PhaseArcNode } from "../../common/view/PhaseArcNode.js";
 import { PhasorDiagramNode } from "../../common/view/PhasorDiagramNode.js";
 import { PhasorNode } from "../../common/view/PhasorNode.js";
-import { SimNumberControl } from "../../common/view/SimNumberControl.js";
-import { SimReadout } from "../../common/view/SimReadout.js";
 import { WaveformNode } from "../../common/view/WaveformNode.js";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { IntroModel } from "../model/IntroModel.js";
@@ -243,21 +243,21 @@ export class IntroScreenView extends ScreenView {
     );
 
     // One value control per element; only the selected one is visible.
-    const resistanceControl = new SimNumberControl(
+    const resistanceControl = new ACPhasorNumberControl(
       labels.resistanceStringProperty,
       model.resistanceProperty,
       RESISTANCE_RANGE_OHMS,
       labels.ohmsPatternStringProperty,
       { decimalPlaces: 0, accessibleName: a11y.controls.resistanceStringProperty },
     );
-    const inductanceControl = new SimNumberControl(
+    const inductanceControl = new ACPhasorNumberControl(
       labels.inductanceStringProperty,
       model.inductanceProperty,
       INDUCTANCE_RANGE_H,
       labels.henriesPatternStringProperty,
       { decimalPlaces: 1, accessibleName: a11y.controls.inductanceStringProperty },
     );
-    const capacitanceControl = new SimNumberControl(
+    const capacitanceControl = new ACPhasorNumberControl(
       labels.capacitanceStringProperty,
       model.capacitanceProperty,
       CAPACITANCE_RANGE_F,
@@ -277,7 +277,7 @@ export class IntroScreenView extends ScreenView {
       children: [resistanceControl, inductanceControl, capacitanceControl],
     });
 
-    const sourceVoltageControl = new SimNumberControl(
+    const sourceVoltageControl = new ACPhasorNumberControl(
       labels.sourceVoltageStringProperty,
       model.source.amplitudeProperty,
       AC_AMPLITUDE_RANGE_V,
@@ -286,7 +286,7 @@ export class IntroScreenView extends ScreenView {
     );
     // The frequency range spans more than two decades and every resonance in the
     // sim lives in its bottom half, so this slider is divided by ratio.
-    const frequencyControl = new SimNumberControl(
+    const frequencyControl = new ACPhasorNumberControl(
       labels.frequencyStringProperty,
       model.source.frequencyProperty,
       AC_FREQUENCY_RANGE_HZ,
@@ -320,14 +320,14 @@ export class IntroScreenView extends ScreenView {
         align: "left",
         spacing: 8,
         children: [
-          new SimReadout(
+          new ACPhasorReadout(
             labels.impedanceStringProperty,
             impedanceMagnitude,
             labels.ohmsPatternStringProperty,
             new Range(0, 10000),
             1,
           ),
-          new SimReadout(
+          new ACPhasorReadout(
             labels.phaseStringProperty,
             phaseDegrees,
             labels.degreesPatternStringProperty,
