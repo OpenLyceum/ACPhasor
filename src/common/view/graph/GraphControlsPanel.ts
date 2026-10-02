@@ -111,7 +111,7 @@ export class GraphControlsPanel {
     });
 
     // Create title in format "(Y vs X)"
-    const leftParen = new Text("(", {
+    const leftParen = new Text(StringManager.getInstance().getLabels().graphTitleOpenStringProperty, {
       font: TITLE_FONT,
       fill: ACPhasorColors.textColorProperty,
     });
@@ -124,7 +124,7 @@ export class GraphControlsPanel {
     });
     this.disposables.push(xComboBox, yComboBox, vsText, paddedVsProperty);
 
-    const rightParen = new Text(")", {
+    const rightParen = new Text(StringManager.getInstance().getLabels().graphTitleCloseStringProperty, {
       font: TITLE_FONT,
       fill: ACPhasorColors.textColorProperty,
     });

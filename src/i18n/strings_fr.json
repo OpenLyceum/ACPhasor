@@ -58,7 +58,12 @@
     "graph": "Graphique",
     "axisLabelWithUnitPattern": "{{name}} ({{unit}})",
     "valueUnitsPattern": "{{value}} {{units}}",
-    "symbolValuePattern": "{{symbol}} {{value}}"
+    "symbolValuePattern": "{{symbol}} {{value}}",
+    "resistorSymbol": "R",
+    "inductorSymbol": "L",
+    "capacitorSymbol": "C",
+    "graphTitleOpen": "(",
+    "graphTitleClose": ")"
   },
   "a11y": {
     "intro": {

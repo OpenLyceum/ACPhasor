@@ -46,6 +46,7 @@ import {
   INDUCTOR_FLUX_LOOP_COUNT,
   INDUCTOR_FLUX_LOOP_SPACING,
 } from "../../ACPhasorConstants.js";
+import { StringManager } from "../../i18n/StringManager.js";
 import { CircuitElementNode } from "./CircuitElementNode.js";
 
 type InductorNodeSelfOptions = {
@@ -247,7 +248,7 @@ export class InductorNode extends CircuitElementNode {
     // The letter clears the widest the field can ever get, so a rising current
     // never crowds it.
     this.addChild(
-      new Text("L", {
+      new Text(StringManager.getInstance().getLabels().inductorSymbolStringProperty, {
         font: "italic bold 15px sans-serif",
         fill: ACPhasorColors.inductorColorProperty,
         centerX: 0,
