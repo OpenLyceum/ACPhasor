@@ -14,8 +14,9 @@
 import type { TReadOnlyProperty } from "scenerystack/axon";
 import type { Range } from "scenerystack/dot";
 import { HBox, Text } from "scenerystack/scenery";
-import { NumberDisplay, PhetFont } from "scenerystack/scenery-phet";
+import { NumberDisplay } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
+import { CAPTION_FONT } from "../ACPhasorFonts.js";
 
 export class ACPhasorReadout extends HBox {
   public constructor(
@@ -29,14 +30,14 @@ export class ACPhasorReadout extends HBox {
       spacing: 8,
       children: [
         new Text(label, {
-          font: new PhetFont(14),
+          font: CAPTION_FONT,
           fill: ACPhasorColors.textColorProperty,
         }),
         new NumberDisplay(numberProperty, displayRange, {
           valuePattern,
           decimalPlaces,
           textOptions: {
-            font: new PhetFont(14),
+            font: CAPTION_FONT,
             fill: ACPhasorColors.controlSurfaceTextColorProperty,
           },
           backgroundFill: ACPhasorColors.controlSurfaceColorProperty,

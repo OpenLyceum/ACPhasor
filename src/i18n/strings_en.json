@@ -55,7 +55,10 @@
     "reactivePowerPattern": "{{value}} var",
     "plainPattern": "{{value}}",
     "vs": "vs",
-    "graph": "Graph"
+    "graph": "Graph",
+    "axisLabelWithUnitPattern": "{{name}} ({{unit}})",
+    "valueUnitsPattern": "{{value}} {{units}}",
+    "symbolValuePattern": "{{symbol}} {{value}}"
   },
   "a11y": {
     "intro": {

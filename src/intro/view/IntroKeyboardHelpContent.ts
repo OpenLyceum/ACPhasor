@@ -8,11 +8,15 @@
 import {
   BasicActionsKeyboardHelpSection,
   SliderControlsKeyboardHelpSection,
+  TimeControlsKeyboardHelpSection,
   TwoColumnKeyboardHelpContent,
 } from "scenerystack/scenery-phet";
 
 export class IntroKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
   public constructor() {
-    super([new SliderControlsKeyboardHelpSection()], [new BasicActionsKeyboardHelpSection()]);
+    super(
+      [new SliderControlsKeyboardHelpSection()],
+      [new TimeControlsKeyboardHelpSection(), new BasicActionsKeyboardHelpSection()],
+    );
   }
 }

@@ -8,8 +8,10 @@
  */
 import {
   BasicActionsKeyboardHelpSection,
+  ComboBoxKeyboardHelpSection,
   MoveDraggableItemsKeyboardHelpSection,
   SliderControlsKeyboardHelpSection,
+  TimeControlsKeyboardHelpSection,
   TwoColumnKeyboardHelpContent,
 } from "scenerystack/scenery-phet";
 
@@ -17,9 +19,14 @@ export class SeriesRlcKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
   public constructor() {
     // The configurable graph pans with a RichDragListener. That listener owns the
     // arrow keys while the plot is focused; sliders own them while a slider is focused.
+    // The graph's axis menus are combo boxes, and the screen has a checkbox.
     super(
-      [new SliderControlsKeyboardHelpSection(), new MoveDraggableItemsKeyboardHelpSection()],
-      [new BasicActionsKeyboardHelpSection()],
+      [
+        new SliderControlsKeyboardHelpSection(),
+        new MoveDraggableItemsKeyboardHelpSection(),
+        new ComboBoxKeyboardHelpSection(),
+      ],
+      [new TimeControlsKeyboardHelpSection(), new BasicActionsKeyboardHelpSection({ withCheckboxContent: true })],
     );
   }
 }

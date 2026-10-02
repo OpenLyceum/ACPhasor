@@ -79,6 +79,7 @@ import { Circle, type Font, HBox, Line, Node, Path, type TColor, Text } from "sc
 import { PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
 import { applyChartRescale, formatTickValue, niceStep } from "./axisScale.js";
+import { formatValueWithUnits } from "./formatCaption.js";
 
 /** Width reserved outside the chart for a set of vertical tick labels (px). */
 const Y_LABEL_GUTTER = 34;
@@ -634,7 +635,7 @@ export class WaveformNode extends Node {
     }
     const reported = trace.captionValue === "average" ? trace.offset : Math.abs(trace.amplitude);
     const value = formatTickValue(reported, trace.axis.scale.fullScale / 2);
-    trace.peakText.string = trace.units === null ? value : `${value} ${trace.units}`;
+    trace.peakText.string = formatValueWithUnits(value, trace.units);
   }
 
   /** Move one trace's playhead dot to its value at `time`. */

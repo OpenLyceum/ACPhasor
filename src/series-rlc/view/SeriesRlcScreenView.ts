@@ -42,6 +42,7 @@ import {
   FLAT_RESET_ALL_BUTTON_OPTIONS,
   TIME_CONTROL_SPEED_RADIO_OPTIONS,
 } from "../../common/ACPhasorButtonOptions.js";
+import { BOLD_CAPTION_FONT, CAPTION_FONT } from "../../common/ACPhasorFonts.js";
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { Phasor } from "../../common/model/Phasor.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
@@ -237,7 +238,7 @@ export class SeriesRlcScreenView extends ScreenView {
     impedanceDiagram.addChild(impedancePhaseArc);
     this.disposables.push(impedanceChain, impedancePhaseArc);
 
-    const captionOptions = { font: "14px sans-serif", fill: ACPhasorColors.textColorProperty };
+    const captionOptions = { font: CAPTION_FONT, fill: ACPhasorColors.textColorProperty };
     const diagramRow = new HBox({
       spacing: 20,
       align: "top",
@@ -258,7 +259,7 @@ export class SeriesRlcScreenView extends ScreenView {
     const tipToTailCheckbox = new Checkbox(
       tipToTailProperty,
       new Text(labels.tipToTailStringProperty, {
-        font: "14px sans-serif",
+        font: CAPTION_FONT,
         fill: ACPhasorColors.textColorProperty,
       }),
       {
@@ -354,7 +355,7 @@ export class SeriesRlcScreenView extends ScreenView {
     // The badge confirms what the diagrams already show — at resonance the
     // reactive phasors cancel and both triangles collapse onto a flat line.
     const resonanceBadge = new Text(labels.atResonanceStringProperty, {
-      font: "bold 14px sans-serif",
+      font: BOLD_CAPTION_FONT,
       fill: ACPhasorColors.resonanceHighlightColorProperty,
       visibleProperty: model.isAtResonanceProperty,
     });
@@ -457,9 +458,9 @@ export class SeriesRlcScreenView extends ScreenView {
     const plottableProperties: PlottableProperty[] = [
       { name: labels.sourceVoltageStringProperty, property: sourceAmplitudeProperty, unit: "V" },
       currentPlottable,
-      { name: "V_R", property: resistorAmplitudeProperty, unit: "V" },
-      { name: "V_L", property: inductorAmplitudeProperty, unit: "V" },
-      { name: "V_C", property: capacitorAmplitudeProperty, unit: "V" },
+      { name: "V<sub>R</sub>", property: resistorAmplitudeProperty, unit: "V" },
+      { name: "V<sub>L</sub>", property: inductorAmplitudeProperty, unit: "V" },
+      { name: "V<sub>C</sub>", property: capacitorAmplitudeProperty, unit: "V" },
       frequencyPlottable,
       { name: labels.phaseStringProperty, property: phaseDegreesProperty, unit: "°" },
       { name: labels.impedanceStringProperty, property: impedanceMagnitudeProperty, unit: "Ω" },
@@ -479,7 +480,7 @@ export class SeriesRlcScreenView extends ScreenView {
 
     const graphToggleButton = new RectangularPushButton({
       ...FLAT_RECTANGULAR_BUTTON_OPTIONS,
-      content: new Text(labels.graphStringProperty, { font: "14px sans-serif" }),
+      content: new Text(labels.graphStringProperty, { font: CAPTION_FONT }),
       listener: () => {
         const visible = this.graph.getGraphVisibleProperty();
         visible.value = !visible.value;

@@ -47,6 +47,7 @@ import {
   FLAT_RESET_ALL_BUTTON_OPTIONS,
   TIME_CONTROL_SPEED_RADIO_OPTIONS,
 } from "../../common/ACPhasorButtonOptions.js";
+import { CAPTION_FONT, SMALL_CAPTION_FONT } from "../../common/ACPhasorFonts.js";
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
 import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
@@ -101,7 +102,7 @@ export class PowerScreenView extends ScreenView {
       }),
     );
 
-    const captionOptions = { font: "14px sans-serif", fill: ACPhasorColors.textColorProperty };
+    const captionOptions = { font: CAPTION_FONT, fill: ACPhasorColors.textColorProperty };
 
     // ── Pictorial circuit ───────────────────────────────────────────────────
     this.circuit = new CircuitDiagramNode({
@@ -192,11 +193,11 @@ export class PowerScreenView extends ScreenView {
       spacing: 18,
       children: [
         new Text(labels.energyDeliveredStringProperty, {
-          font: "12px sans-serif",
+          font: SMALL_CAPTION_FONT,
           fill: ACPhasorColors.energyDeliveredColorProperty,
         }),
         new Text(labels.energyReturnedStringProperty, {
-          font: "12px sans-serif",
+          font: SMALL_CAPTION_FONT,
           fill: ACPhasorColors.energyReturnedColorProperty,
         }),
       ],

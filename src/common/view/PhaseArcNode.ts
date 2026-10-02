@@ -28,6 +28,7 @@ import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Node, Path, RichText, type TColor } from "scenerystack/scenery";
+import { formatValueWithUnits } from "./formatCaption.js";
 
 type PhaseArcNodeSelfOptions = {
   /** Radius of the arc in model units, measured from the complex-plane origin. */
@@ -116,7 +117,7 @@ export class PhaseArcNode extends Node {
 
       if (labelNode) {
         const degrees = (sweep * 180) / Math.PI;
-        labelNode.string = `${degrees > 0 ? "+" : ""}${toFixed(degrees, 0)}°`;
+        labelNode.string = formatValueWithUnits(`${degrees > 0 ? "+" : ""}${toFixed(degrees, 0)}`, "°");
         // Sit just outside the middle of the wedge, where it clears both arrows.
         labelNode.center = viewOrigin.plus(
           new Vector2(

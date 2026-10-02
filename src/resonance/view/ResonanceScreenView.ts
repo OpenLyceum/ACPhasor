@@ -45,6 +45,7 @@ import {
   FLAT_RESET_ALL_BUTTON_OPTIONS,
   LIGHT_SURFACE_TEXT_FILL,
 } from "../../common/ACPhasorButtonOptions.js";
+import { BOLD_CAPTION_FONT, BUTTON_FONT, CAPTION_FONT } from "../../common/ACPhasorFonts.js";
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
 import { ACPhasorReadout } from "../../common/view/ACPhasorReadout.js";
@@ -97,7 +98,7 @@ export class ResonanceScreenView extends ScreenView {
       }),
     );
 
-    const captionOptions = { font: "14px sans-serif", fill: ACPhasorColors.textColorProperty };
+    const captionOptions = { font: CAPTION_FONT, fill: ACPhasorColors.textColorProperty };
 
     // ── Response curves ─────────────────────────────────────────────────────
     // Stacked over one frequency axis, labelled only on the lower chart: the two
@@ -206,7 +207,7 @@ export class ResonanceScreenView extends ScreenView {
     this.disposables.push(phaseDegrees, impedanceMagnitude);
 
     const resonanceBadge = new Text(labels.atResonanceStringProperty, {
-      font: "bold 14px sans-serif",
+      font: BOLD_CAPTION_FONT,
       fill: ACPhasorColors.resonanceHighlightColorProperty,
       visibleProperty: model.isAtResonanceProperty,
     });
@@ -336,7 +337,7 @@ export class ResonanceScreenView extends ScreenView {
     this.disposables.push(sweepLabelProperty);
     const sweepButton = new RectangularPushButton({
       ...FLAT_RECTANGULAR_BUTTON_OPTIONS,
-      content: new Text(sweepLabelProperty, { font: "16px sans-serif", fill: LIGHT_SURFACE_TEXT_FILL }),
+      content: new Text(sweepLabelProperty, { font: BUTTON_FONT, fill: LIGHT_SURFACE_TEXT_FILL }),
       baseColor: ACPhasorColors.controlSurfaceColorProperty,
       minWidth: 92,
       listener: () => {

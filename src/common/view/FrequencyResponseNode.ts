@@ -54,6 +54,7 @@ import { Circle, type Font, Line, Node, Path, type TColor, Text } from "scenerys
 import { PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
 import { applyChartRescale, formatTickValue, niceStep } from "./axisScale.js";
+import { formatSymbolValue, formatValueWithUnits } from "./formatCaption.js";
 
 /** Width reserved outside the chart for the vertical tick labels (px). */
 const Y_LABEL_GUTTER = 40;
@@ -411,7 +412,7 @@ export class FrequencyResponseNode extends Node {
 
     if (this.captionText) {
       const formatted = formatTickValue(safeValue, this.tickSpacing / 10);
-      this.captionText.string = `${this.label} ${formatted}${unitsSuffix(this.units)}`;
+      this.captionText.string = formatSymbolValue(this.label, formatValueWithUnits(formatted, this.units));
     }
   }
 
@@ -442,16 +443,4 @@ export class FrequencyResponseNode extends Node {
     const right = this.chartTransform.modelToViewX(this.toModelX(high));
     this.bandPath.shape = Shape.rect(left, 0, right - left, this.chartTransform.viewHeight);
   }
-}
-
-/**
- * The unit part of a caption. Degrees are written tight against the number
- * ("31.5°"); every other unit is a separate word ("0.43 A"), which is the
- * convention the rest of the sim's value patterns follow.
- */
-function unitsSuffix(units: string | null): string {
-  if (units === null) {
-    return "";
-  }
-  return units === "°" ? units : ` ${units}`;
 }

@@ -31,9 +31,10 @@ import { NumberProperty, type PhetioProperty, type TReadOnlyProperty } from "sce
 import { Range, toFixed } from "scenerystack/dot";
 import { combineOptions, optionize } from "scenerystack/phet-core";
 import { StringUtils } from "scenerystack/phetcommon";
-import { NumberControl, type NumberControlOptions, PhetFont } from "scenerystack/scenery-phet";
+import { NumberControl, type NumberControlOptions } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
 import { FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../ACPhasorButtonOptions.js";
+import { CAPTION_FONT } from "../ACPhasorFonts.js";
 
 export type ACPhasorNumberControlSelfOptions = {
   /** Digits after the decimal point in the readout (default 1). */
@@ -106,14 +107,14 @@ export class ACPhasorNumberControl extends NumberControl {
         {
           delta,
           titleNodeOptions: {
-            font: new PhetFont(14),
+            font: CAPTION_FONT,
             fill: ACPhasorColors.textColorProperty,
             maxWidth: 140,
           },
           numberDisplayOptions: {
             ...numberDisplayOptions,
             textOptions: {
-              font: new PhetFont(14),
+              font: CAPTION_FONT,
               fill: ACPhasorColors.controlSurfaceTextColorProperty,
             },
             backgroundFill: ACPhasorColors.controlSurfaceColorProperty,

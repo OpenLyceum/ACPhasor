@@ -8,12 +8,13 @@
  */
 
 import { DerivedProperty, type Property, type TReadOnlyProperty } from "scenerystack/axon";
-import { HBox, type Node, Rectangle, Text } from "scenerystack/scenery";
+import { HBox, type Node, Rectangle, RichText, Text } from "scenerystack/scenery";
 import { PhetFont } from "scenerystack/scenery-phet";
 import { ComboBox } from "scenerystack/sun";
 import ACPhasorColors from "../../../ACPhasorColors.js";
 import ACPhasorNamespace from "../../../ACPhasorNamespace.js";
 import { StringManager } from "../../../i18n/StringManager.js";
+import { AC_PHASOR_COMBO_BOX_OPTIONS, LIGHT_SURFACE_TEXT_FILL } from "../../ACPhasorButtonOptions.js";
 import type { PlottableProperty } from "./PlottableProperty.js";
 
 // Font sizes
@@ -78,9 +79,9 @@ export class GraphControlsPanel {
     const xItems = this.availableProperties.map((prop) => ({
       value: prop,
       createNode: () =>
-        new Text(prop.name, {
+        new RichText(prop.name, {
           font: COMBO_BOX_FONT,
-          fill: ACPhasorColors.textColorProperty,
+          fill: LIGHT_SURFACE_TEXT_FILL,
         }),
       tandemName: `${this.sanitizeTandemName(prop.name)}Item`,
     }));
@@ -89,19 +90,15 @@ export class GraphControlsPanel {
       cornerRadius: COMBO_BOX_CORNER_RADIUS,
       xMargin: COMBO_BOX_X_MARGIN,
       yMargin: COMBO_BOX_Y_MARGIN,
-      buttonFill: ACPhasorColors.panelBackgroundColorProperty,
-      buttonStroke: ACPhasorColors.panelBorderColorProperty,
-      listFill: ACPhasorColors.panelBackgroundColorProperty,
-      listStroke: ACPhasorColors.panelBorderColorProperty,
-      highlightFill: ACPhasorColors.panelBorderColorProperty,
+      ...AC_PHASOR_COMBO_BOX_OPTIONS,
     });
 
     const yItems = this.availableProperties.map((prop) => ({
       value: prop,
       createNode: () =>
-        new Text(prop.name, {
+        new RichText(prop.name, {
           font: COMBO_BOX_FONT,
-          fill: ACPhasorColors.textColorProperty,
+          fill: LIGHT_SURFACE_TEXT_FILL,
         }),
       tandemName: `${this.sanitizeTandemName(prop.name)}Item`,
     }));
@@ -110,11 +107,7 @@ export class GraphControlsPanel {
       cornerRadius: COMBO_BOX_CORNER_RADIUS,
       xMargin: COMBO_BOX_X_MARGIN,
       yMargin: COMBO_BOX_Y_MARGIN,
-      buttonFill: ACPhasorColors.panelBackgroundColorProperty,
-      buttonStroke: ACPhasorColors.panelBorderColorProperty,
-      listFill: ACPhasorColors.panelBackgroundColorProperty,
-      listStroke: ACPhasorColors.panelBorderColorProperty,
-      highlightFill: ACPhasorColors.panelBorderColorProperty,
+      ...AC_PHASOR_COMBO_BOX_OPTIONS,
     });
 
     // Create title in format "(Y vs X)"

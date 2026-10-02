@@ -8,15 +8,17 @@
  * and the i18n source is ACPhasor's StringManager.
  */
 
-import { BooleanProperty, Property, type TReadOnlyProperty } from "scenerystack/axon";
+import { BooleanProperty, DerivedProperty, Property, type TReadOnlyProperty } from "scenerystack/axon";
 import { ChartRectangle, ChartTransform, GridLineSet, LinePlot, TickLabelSet, TickMarkSet } from "scenerystack/bamboo";
 import { Range, toFixed } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { Orientation } from "scenerystack/phet-core";
-import { FireListener, HBox, Node, Rectangle, Text } from "scenerystack/scenery";
+import { StringUtils } from "scenerystack/phetcommon";
+import { FireListener, HBox, Node, Rectangle, RichText, Text } from "scenerystack/scenery";
 import { PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../../ACPhasorColors.js";
 import ACPhasorNamespace from "../../../ACPhasorNamespace.js";
+import { StringManager } from "../../../i18n/StringManager.js";
 import { GraphControlsPanel } from "./GraphControlsPanel.js";
 import { GraphDataManager } from "./GraphDataManager.js";
 import { GraphInteractionHandler } from "./GraphInteractionHandler.js";
@@ -74,8 +76,10 @@ export class ConfigurableGraph extends Node {
   private readonly graphContentNode: Node;
 
   // Axis labels
-  private readonly xAxisLabelNode: Text;
-  private readonly yAxisLabelNode: Text;
+  private readonly xAxisLabelNode: RichText;
+  private readonly yAxisLabelNode: RichText;
+  private readonly xAxisLabelStringProperty: TReadOnlyProperty<string>;
+  private readonly yAxisLabelStringProperty: TReadOnlyProperty<string>;
 
   // Grid and tick components
   private readonly verticalGridLineSet: GridLineSet;
@@ -239,8 +243,10 @@ export class ConfigurableGraph extends Node {
     });
     this.graphContentNode.addChild(this.clippedDataContainer);
 
-    // Create axis labels
-    this.xAxisLabelNode = new Text(this.formatAxisLabel(initialXProperty), {
+    // Create axis labels. They follow the selected quantity and the locale.
+    this.xAxisLabelStringProperty = this.createAxisLabelStringProperty(this.xPropertyProperty);
+    this.yAxisLabelStringProperty = this.createAxisLabelStringProperty(this.yPropertyProperty);
+    this.xAxisLabelNode = new RichText(this.xAxisLabelStringProperty, {
       font: AXIS_LABEL_FONT,
       fill: ACPhasorColors.textColorProperty,
       centerX: this.graphWidth / 2,
@@ -248,7 +254,7 @@ export class ConfigurableGraph extends Node {
     });
     this.graphContentNode.addChild(this.xAxisLabelNode);
 
-    this.yAxisLabelNode = new Text(this.formatAxisLabel(initialYProperty), {
+    this.yAxisLabelNode = new RichText(this.yAxisLabelStringProperty, {
       font: AXIS_LABEL_FONT,
       fill: ACPhasorColors.textColorProperty,
       rotation: -Math.PI / 2,
@@ -378,18 +384,16 @@ export class ConfigurableGraph extends Node {
 
     this.graphContentNode.addChild(this.controlButtonsPanel);
 
-    // Update labels when axes change
-    this.xPropertyProperty.link((property) => {
-      this.xAxisLabelNode.string = this.formatAxisLabel(property);
+    // Keep the labels centred as their text changes, and start a fresh trace
+    // whenever an axis changes quantity.
+    this.xAxisLabelStringProperty.link(() => {
       this.xAxisLabelNode.centerX = this.graphWidth / 2;
-      this.clearData();
     });
-
-    this.yPropertyProperty.link((property) => {
-      this.yAxisLabelNode.string = this.formatAxisLabel(property);
+    this.yAxisLabelStringProperty.link(() => {
       this.yAxisLabelNode.centerY = this.graphHeight / 2;
-      this.clearData();
     });
+    this.xPropertyProperty.lazyLink(() => this.clearData());
+    this.yPropertyProperty.lazyLink(() => this.clearData());
 
     // Create header bar (checkbox is now in ToolsControlPanel)
     this.headerBar = controlsPanel.createHeaderBar();
@@ -456,21 +460,21 @@ export class ConfigurableGraph extends Node {
   }
 
   /**
-   * Helper to get the string value from either a string or TReadOnlyProperty<string>
+   * An axis label, "name (unit)", for whichever quantity the axis shows. It
+   * depends on every quantity's name, so a locale change updates it too.
    */
-  private getNameValue(name: string | TReadOnlyProperty<string>): string {
-    return typeof name === "string" ? name : name.value;
-  }
-
-  /**
-   * Format an axis label with the property name and unit
-   */
-  private formatAxisLabel(property: PlottableProperty): string {
-    const nameValue = this.getNameValue(property.name);
-    if (property.unit) {
-      return `${nameValue} (${property.unit})`;
-    }
-    return nameValue;
+  private createAxisLabelStringProperty(
+    propertyProperty: TReadOnlyProperty<PlottableProperty>,
+  ): TReadOnlyProperty<string> {
+    const patternProperty = StringManager.getInstance().getLabels().axisLabelWithUnitPatternStringProperty;
+    const nameProperties = this.availableProperties
+      .map((plottable) => plottable.name)
+      .filter((name): name is TReadOnlyProperty<string> => typeof name !== "string");
+    return DerivedProperty.deriveAny([propertyProperty, patternProperty, ...nameProperties], () => {
+      const plottable = propertyProperty.value;
+      const name = typeof plottable.name === "string" ? plottable.name : plottable.name.value;
+      return plottable.unit ? StringUtils.fillIn(patternProperty.value, { name: name, unit: plottable.unit }) : name;
+    });
   }
 
   /**
@@ -585,6 +589,8 @@ export class ConfigurableGraph extends Node {
     this.graphVisibleProperty.dispose();
     this.isDraggingProperty.dispose();
     this.isResizingProperty.dispose();
+    this.xAxisLabelStringProperty.dispose();
+    this.yAxisLabelStringProperty.dispose();
     // Last: the combo boxes above were listening to these.
     this.xPropertyProperty.dispose();
     this.yPropertyProperty.dispose();
