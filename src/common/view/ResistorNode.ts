@@ -24,6 +24,7 @@ import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Node, Path, Rectangle, type TColor, Text } from "scenerystack/scenery";
 import ACPhasorColors from "../../ACPhasorColors.js";
 import { StringManager } from "../../i18n/StringManager.js";
+import { ELEMENT_SYMBOL_FONT } from "../ACPhasorFonts.js";
 import { CircuitElementNode } from "./CircuitElementNode.js";
 
 type ResistorNodeSelfOptions = {
@@ -232,7 +233,7 @@ export class ResistorNode extends CircuitElementNode {
     // Letter label above the part.
     this.addChild(
       new Text(StringManager.getInstance().getLabels().resistorSymbolStringProperty, {
-        font: "italic bold 15px sans-serif",
+        font: ELEMENT_SYMBOL_FONT,
         fill: ACPhasorColors.resistorColorProperty,
         centerX: 0,
         bottom: -halfDiameter - 6,

@@ -76,8 +76,8 @@ import { Bounds2, Range, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, Orientation, optionize } from "scenerystack/phet-core";
 import { Circle, type Font, HBox, Line, Node, Path, type TColor, Text } from "scenerystack/scenery";
-import { PhetFont } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
+import { SMALL_CAPTION_FONT, TICK_LABEL_FONT } from "../ACPhasorFonts.js";
 import { applyChartRescale, formatTickValue, niceStep } from "./axisScale.js";
 import { formatValueWithUnits } from "./formatCaption.js";
 
@@ -281,8 +281,8 @@ export class WaveformNode extends Node {
         // convention as the "Re"/"Im" axes of PhasorDiagramNode. Override it to
         // pass a localized string where a screen wants words instead.
         timeAxisLabel: "t (s)",
-        labelFont: new PhetFont(10),
-        captionFont: new PhetFont(12),
+        labelFont: TICK_LABEL_FONT,
+        captionFont: SMALL_CAPTION_FONT,
         stroke: ACPhasorColors.accentColorProperty as TColor,
         label: null as string | null,
         units: null as string | null,

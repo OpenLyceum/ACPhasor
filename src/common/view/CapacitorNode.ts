@@ -32,6 +32,7 @@ import { Node, Path, Text } from "scenerystack/scenery";
 import { ArrowNode, MinusNode, PlusNode } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
 import { StringManager } from "../../i18n/StringManager.js";
+import { ELEMENT_SYMBOL_FONT } from "../ACPhasorFonts.js";
 import { CircuitElementNode } from "./CircuitElementNode.js";
 
 type CapacitorNodeSelfOptions = {
@@ -189,7 +190,7 @@ export class CapacitorNode extends CircuitElementNode {
 
     this.addChild(
       new Text(StringManager.getInstance().getLabels().capacitorSymbolStringProperty, {
-        font: "italic bold 15px sans-serif",
+        font: ELEMENT_SYMBOL_FONT,
         fill: ACPhasorColors.capacitorColorProperty,
         centerX: 0,
         bottom: this.topPlateTopY - this.depthY - 5,

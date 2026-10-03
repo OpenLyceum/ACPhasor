@@ -31,8 +31,9 @@ import { DerivedProperty, Multilink, Property, type TReadOnlyProperty } from "sc
 import { Vector2 } from "scenerystack/dot";
 import { optionize } from "scenerystack/phet-core";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
-import { Line, Node, RichText, type TColor } from "scenerystack/scenery";
+import { type Font, Line, Node, RichText, type TColor } from "scenerystack/scenery";
 import { ArrowNode, type ArrowNodeOptions } from "scenerystack/scenery-phet";
+import { PHASOR_LABEL_FONT } from "../ACPhasorFonts.js";
 import type { Phasor } from "../model/Phasor.js";
 
 /** Which axis a projection line drops to, or "none" for no construction line. */
@@ -47,9 +48,23 @@ type PhasorNodeSelfOptions = {
    */
   labelString?: string | TReadOnlyProperty<string> | null;
   /** Font used for the label. */
-  labelFont?: string;
+  labelFont?: Font;
   /** Explicit offset in view pixels from the tip to the label center; null auto-places it past the tip. */
   labelOffset?: Vector2 | null;
+  /**
+   * A model point the label should keep away from — the centroid of a closed
+   * figure the arrow is a side of. While it holds a point, the label sits beside
+   * the middle of the arrow, on the far side from that point, so labels of sides
+   * that meet at a corner cannot land on each other. While it holds null (or is
+   * omitted), the label sits past the tip as usual.
+   */
+  labelAwayFromProperty?: TReadOnlyProperty<Vector2 | null> | null;
+  /**
+   * Side to use when the arrow points straight through `labelAwayFromProperty`,
+   * as every side does when the figure collapses onto one line: +1 puts the
+   * label to the right of the arrow's direction on screen, −1 to the left.
+   */
+  labelTieBreakSide?: 1 | -1;
   /**
    * Where the arrow starts, in model coordinates. Null pins it to the origin,
    * which is the usual case; supply a Property to chain phasors head to tail.
@@ -67,11 +82,16 @@ type PhasorNodeArrowOptions = Omit<ArrowNodeOptions, "fill" | "stroke">;
 
 export type PhasorNodeOptions = PhasorNodeSelfOptions & PhasorNodeArrowOptions;
 
+/** Gap in view pixels between a side-placed label and its arrow. */
+const LABEL_GAP = 6;
+
 export class PhasorNode extends Node {
   private readonly arrowNode: ArrowNode;
   private readonly updateMultilink: ReturnType<typeof Multilink.multilink>;
   /** The stand-in tail this node created, if it was not given one to use. */
   private readonly ownedTailProperty: Property<Vector2> | null;
+  /** The stand-in keep-away point this node created, if it was not given one. */
+  private readonly ownedAwayFromProperty: Property<Vector2 | null> | null;
 
   public constructor(
     phasorProperty: TReadOnlyProperty<Phasor>,
@@ -82,8 +102,10 @@ export class PhasorNode extends Node {
       {
         fill: "black" as TColor,
         labelString: null as string | TReadOnlyProperty<string> | null,
-        labelFont: "bold 16px sans-serif",
+        labelFont: PHASOR_LABEL_FONT,
         labelOffset: null as Vector2 | null,
+        labelAwayFromProperty: null as TReadOnlyProperty<Vector2 | null> | null,
+        labelTieBreakSide: 1 as 1 | -1,
         tailProperty: null as TReadOnlyProperty<Vector2> | null,
         showProjection: "none" as PhasorProjection,
         tailWidth: 3,
@@ -134,6 +156,7 @@ export class PhasorNode extends Node {
     }
 
     const labelOffset = options.labelOffset;
+    const labelTieBreakSide = options.labelTieBreakSide;
     const showProjection = options.showProjection;
 
     // A phasor with no tail Property never moves its tail, but binding through a
@@ -150,34 +173,61 @@ export class PhasorNode extends Node {
     }
     this.ownedTailProperty = ownedTailProperty;
 
-    this.updateMultilink = Multilink.multilink([phasorProperty, tailProperty], (phasor, modelTail) => {
-      const tail = modelViewTransform.modelToViewPosition(modelTail);
-      const tip = modelViewTransform.modelToViewPosition(modelTail.plus(phasor.toVector2()));
-      this.arrowNode.setTailAndTip(tail.x, tail.y, tip.x, tip.y);
+    // Same constant-Property trick for the label's keep-away point.
+    let ownedAwayFromProperty: Property<Vector2 | null> | null = null;
+    let awayFromProperty: TReadOnlyProperty<Vector2 | null>;
+    if (options.labelAwayFromProperty) {
+      awayFromProperty = options.labelAwayFromProperty;
+    } else {
+      ownedAwayFromProperty = new Property<Vector2 | null>(null);
+      awayFromProperty = ownedAwayFromProperty;
+    }
+    this.ownedAwayFromProperty = ownedAwayFromProperty;
 
-      if (projectionLine) {
-        // Drop onto the axis through the phasor's own tail, so a chained phasor
-        // projects against where it starts rather than against the origin.
-        const foot = showProjection === "real" ? new Vector2(tip.x, tail.y) : new Vector2(tail.x, tip.y);
-        projectionLine.setLine(tip.x, tip.y, foot.x, foot.y);
-      }
+    this.updateMultilink = Multilink.multilink(
+      [phasorProperty, tailProperty, awayFromProperty],
+      (phasor, modelTail, modelAwayFrom) => {
+        const tail = modelViewTransform.modelToViewPosition(modelTail);
+        const tip = modelViewTransform.modelToViewPosition(modelTail.plus(phasor.toVector2()));
+        this.arrowNode.setTailAndTip(tail.x, tail.y, tip.x, tip.y);
 
-      if (labelNode) {
-        if (labelOffset) {
-          labelNode.center = tip.plus(labelOffset);
-        } else {
-          // Nudge the label just beyond the tip, along the arrow direction.
-          const direction = tip.minus(tail);
-          const push = direction.magnitude > 1e-6 ? direction.normalized().timesScalar(14) : Vector2.ZERO;
-          labelNode.center = tip.plus(push);
+        if (projectionLine) {
+          // Drop onto the axis through the phasor's own tail, so a chained phasor
+          // projects against where it starts rather than against the origin.
+          const foot = showProjection === "real" ? new Vector2(tip.x, tail.y) : new Vector2(tail.x, tip.y);
+          projectionLine.setLine(tip.x, tip.y, foot.x, foot.y);
         }
-      }
-    });
+
+        if (labelNode) {
+          const direction = tip.minus(tail);
+          if (labelOffset) {
+            labelNode.center = tip.plus(labelOffset);
+          } else if (modelAwayFrom && direction.magnitude > 1e-6) {
+            // Beside the middle of the side, outward. On screen (y down), the
+            // perpendicular (−dy, dx) is to the right of the arrow's direction.
+            const midpoint = tail.average(tip);
+            const right = new Vector2(-direction.y, direction.x).normalized();
+            const outward = midpoint.minus(modelViewTransform.modelToViewPosition(modelAwayFrom)).dot(right);
+            const side = Math.abs(outward) > 1e-3 ? Math.sign(outward) : labelTieBreakSide;
+            const normal = right.timesScalar(side);
+            // Clear the label's own half-extent along the normal, plus a gap.
+            const clearance =
+              LABEL_GAP + 0.5 * (Math.abs(normal.x) * labelNode.width + Math.abs(normal.y) * labelNode.height);
+            labelNode.center = midpoint.plus(normal.timesScalar(clearance));
+          } else {
+            // Nudge the label just beyond the tip, along the arrow direction.
+            const push = direction.magnitude > 1e-6 ? direction.normalized().timesScalar(14) : Vector2.ZERO;
+            labelNode.center = tip.plus(push);
+          }
+        }
+      },
+    );
   }
 
   public override dispose(): void {
     this.updateMultilink.dispose();
     this.ownedTailProperty?.dispose();
+    this.ownedAwayFromProperty?.dispose();
     super.dispose();
   }
 }

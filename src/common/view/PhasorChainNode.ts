@@ -64,6 +64,13 @@ type PhasorChainNodeSelfOptions = {
    * head-to-tail mode it closes the figure onto the last link's tip.
    */
   resultant?: PhasorChainLink | null;
+  /**
+   * True labels each side of the closed head-to-tail figure beside its middle,
+   * outside the figure, instead of past its tip. In a triangle two sides always
+   * share the resultant's tip, so tip labels collide there. Common-origin mode
+   * keeps tip labels, since nothing is closed then.
+   */
+  labelSides?: boolean;
 };
 
 export type PhasorChainNodeOptions = PhasorChainNodeSelfOptions;
@@ -82,6 +89,7 @@ export class PhasorChainNode extends Node {
       {
         tipToTailProperty: null as TReadOnlyProperty<boolean> | null,
         resultant: null as PhasorChainLink | null,
+        labelSides: false,
       },
       providedOptions,
     );
@@ -98,6 +106,30 @@ export class PhasorChainNode extends Node {
     // the first link's tail never moves off it.
     const originProperty = new Property(Vector2.ZERO);
     this.ownedProperties.push(originProperty);
+
+    // The centroid of the closed figure's corners, which side labels keep away
+    // from; null whenever the links are drawn from a common origin.
+    let figureCentroidProperty: TReadOnlyProperty<Vector2 | null> | null = null;
+    if (options.labelSides) {
+      const linkProperties = links.map((link) => link.property);
+      figureCentroidProperty = DerivedProperty.deriveAny(
+        tipToTailProperty ? [tipToTailProperty, ...linkProperties] : linkProperties,
+        () => {
+          if (tipToTailProperty && !tipToTailProperty.value) {
+            return null;
+          }
+          let corner = Vector2.ZERO;
+          let sum = Vector2.ZERO;
+          for (const linkProperty of linkProperties) {
+            corner = corner.plus(linkProperty.value.toVector2());
+            sum = sum.plus(corner);
+          }
+          // The origin is a corner too, but it adds nothing to the sum.
+          return sum.timesScalar(1 / (linkProperties.length + 1));
+        },
+      );
+      this.ownedProperties.push(figureCentroidProperty);
+    }
 
     let previousTail: TReadOnlyProperty<Vector2> = originProperty;
     let previousLink: PhasorChainLink | null = null;
@@ -122,6 +154,7 @@ export class PhasorChainNode extends Node {
       const phasorNode = new PhasorNode(link.property, modelViewTransform, {
         fill: link.fill,
         labelString: link.label ?? null,
+        labelAwayFromProperty: figureCentroidProperty,
         tailProperty: tailProperty,
         ...link.arrowOptions,
       });
@@ -139,6 +172,10 @@ export class PhasorChainNode extends Node {
       const resultantNode = new PhasorNode(resultant.property, modelViewTransform, {
         fill: resultant.fill,
         labelString: resultant.label ?? null,
+        labelAwayFromProperty: figureCentroidProperty,
+        // Opposite the links, so that when the figure folds flat (the reactive
+        // parts cancel) the resultant's label does not land on theirs.
+        labelTieBreakSide: -1,
         ...resultant.arrowOptions,
       });
       this.phasorNodes.push(resultantNode);

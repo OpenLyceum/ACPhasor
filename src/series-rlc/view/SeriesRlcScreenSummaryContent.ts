@@ -5,12 +5,15 @@
  * sentence is live: it reports whether the circuit is currently inductive,
  * capacitive, or at resonance, based on the net reactance.
  */
-import { DerivedProperty } from "scenerystack/axon";
+import { DerivedProperty, type ReadOnlyProperty } from "scenerystack/axon";
 import { ScreenSummaryContent } from "scenerystack/sim";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { SeriesRlcModel } from "../model/SeriesRlcModel.js";
 
 export class SeriesRlcScreenSummaryContent extends ScreenSummaryContent {
+  /** Live current-details sentence; derived here, so disposed here. */
+  private readonly currentDetailsProperty: ReadOnlyProperty<string>;
+
   public constructor(model: SeriesRlcModel) {
     const a11y = StringManager.getInstance().getSeriesRlcA11yStrings();
 
@@ -38,5 +41,11 @@ export class SeriesRlcScreenSummaryContent extends ScreenSummaryContent {
       currentDetailsContent: currentDetails,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
+    this.currentDetailsProperty = currentDetails;
+  }
+
+  public override dispose(): void {
+    this.currentDetailsProperty.dispose();
+    super.dispose();
   }
 }

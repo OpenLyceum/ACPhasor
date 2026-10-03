@@ -103,10 +103,14 @@ const ACPhasorColors = {
     projector: "#333333",
   }),
 
-  /** Moving charge carriers in the circuit diagram. Amber in both profiles for a "charge" read. */
+  /**
+   * Moving charge carriers, and the current wherever it is drawn (phasor, scope
+   * trace, i(t) axis ticks). Amber in both profiles for a "charge" read; the
+   * projector amber is dark enough (5.2:1 on white) to read as text.
+   */
   chargeColorProperty: new ProfileColorProperty(ACPhasorNamespace, "charge", {
     default: "#ffd54f",
-    projector: "#f9a825",
+    projector: "#a15c00",
   }),
 
   // ── Pictorial circuit elements ───────────────────────────────────────────────

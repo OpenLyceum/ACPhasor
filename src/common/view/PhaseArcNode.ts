@@ -27,7 +27,8 @@ import { toFixed, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
-import { Node, Path, RichText, type TColor } from "scenerystack/scenery";
+import { type Font, Node, Path, RichText, type TColor } from "scenerystack/scenery";
+import { SYMBOL_FONT } from "../ACPhasorFonts.js";
 import { formatValueWithUnits } from "./formatCaption.js";
 
 type PhaseArcNodeSelfOptions = {
@@ -38,7 +39,7 @@ type PhaseArcNodeSelfOptions = {
   /** Line width of the arc in view pixels. */
   lineWidth?: number;
   /** Font of the angle label. */
-  labelFont?: string;
+  labelFont?: Font;
   /** Whether to write the angle in degrees inside the wedge. */
   showLabel?: boolean;
   /**
@@ -65,7 +66,7 @@ export class PhaseArcNode extends Node {
         modelRadius: 0.45,
         stroke: "black" as TColor,
         lineWidth: 1.5,
-        labelFont: "italic 13px sans-serif",
+        labelFont: SYMBOL_FONT,
         showLabel: true,
         minimumAngle: (2 * Math.PI) / 180,
       },

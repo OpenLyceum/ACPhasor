@@ -6,12 +6,15 @@
  * the drive frequency is presently on, which is what the marker on the curve
  * shows sighted users.
  */
-import { DerivedProperty } from "scenerystack/axon";
+import { DerivedProperty, type ReadOnlyProperty } from "scenerystack/axon";
 import { ScreenSummaryContent } from "scenerystack/sim";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { ResonanceModel } from "../model/ResonanceModel.js";
 
 export class ResonanceScreenSummaryContent extends ScreenSummaryContent {
+  /** Live current-details sentence; derived here, so disposed here. */
+  private readonly currentDetailsProperty: ReadOnlyProperty<string>;
+
   public constructor(model: ResonanceModel) {
     const a11y = StringManager.getInstance().getResonanceA11yStrings();
 
@@ -40,5 +43,11 @@ export class ResonanceScreenSummaryContent extends ScreenSummaryContent {
       currentDetailsContent: currentDetails,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
+    this.currentDetailsProperty = currentDetails;
+  }
+
+  public override dispose(): void {
+    this.currentDetailsProperty.dispose();
+    super.dispose();
   }
 }

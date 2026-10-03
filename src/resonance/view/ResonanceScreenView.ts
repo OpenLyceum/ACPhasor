@@ -24,7 +24,7 @@
 import { DerivedProperty, Multilink } from "scenerystack/axon";
 import { Range } from "scenerystack/dot";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
-import { HBox, Node, Rectangle, Text, VBox } from "scenerystack/scenery";
+import { HBox, Rectangle, Text, VBox } from "scenerystack/scenery";
 import { ResetAllButton } from "scenerystack/scenery-phet";
 import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import { RectangularPushButton } from "scenerystack/sun";
@@ -184,6 +184,7 @@ export class ResonanceScreenView extends ScreenView {
       impedanceDiagram.modelViewTransform,
       {
         resultant: { property: scaledImpedance, fill: ACPhasorColors.impedanceColorProperty, label: "Z" },
+        labelSides: true,
       },
     );
     impedanceDiagram.addChild(impedanceChain);
@@ -386,19 +387,17 @@ export class ResonanceScreenView extends ScreenView {
       ),
     );
 
-    this.addChild(
-      new Node({
-        pdomOrder: [
-          resistanceControl,
-          inductanceControl,
-          capacitanceControl,
-          sourceVoltageControl,
-          frequencyControl,
-          sweepButton,
-          resetAllButton,
-        ],
-      }),
-    );
+    // Traversal order, split into the standard play-area and control-area
+    // regions so screen readers can jump between them.
+    this.pdomPlayAreaNode.pdomOrder = [
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
+      sweepButton,
+    ];
+    this.pdomControlAreaNode.pdomOrder = [resetAllButton];
 
     this.updateCurves();
     this.updateMarkers();
@@ -439,6 +438,7 @@ export class ResonanceScreenView extends ScreenView {
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
+    this.screenSummaryContent?.dispose();
     super.dispose();
   }
 }

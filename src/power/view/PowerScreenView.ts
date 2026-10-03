@@ -25,7 +25,7 @@
 import { DerivedProperty, Multilink } from "scenerystack/axon";
 import { Range } from "scenerystack/dot";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
-import { HBox, Node, Rectangle, Text, VBox } from "scenerystack/scenery";
+import { HBox, Rectangle, Text, VBox } from "scenerystack/scenery";
 import { ResetAllButton, TimeControlNode } from "scenerystack/scenery-phet";
 import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import ACPhasorColors from "../../ACPhasorColors.js";
@@ -243,6 +243,7 @@ export class PowerScreenView extends ScreenView {
       triangleDiagram.modelViewTransform,
       {
         resultant: { property: scaledApparent, fill: ACPhasorColors.impedanceColorProperty, label: "S" },
+        labelSides: true,
       },
     );
     triangleDiagram.addChild(powerChain);
@@ -368,6 +369,10 @@ export class PowerScreenView extends ScreenView {
     controlPanel.right = this.layoutBounds.maxX - SCREEN_VIEW_MARGIN;
     controlPanel.top = SCREEN_VIEW_MARGIN;
 
+    // The readouts hang off the triangle column, so longer translations (French)
+    // would run under the control panel; shrink them to the gap instead.
+    readoutPanel.maxWidth = controlPanel.left - 10 - readoutPanel.left;
+
     // ── Time control + reset ────────────────────────────────────────────────
     const timeControl = new TimeControlNode(model.timer.isPlayingProperty, {
       timeSpeedProperty: model.timer.timeSpeedProperty,
@@ -440,19 +445,16 @@ export class PowerScreenView extends ScreenView {
       ),
     );
 
-    this.addChild(
-      new Node({
-        pdomOrder: [
-          resistanceControl,
-          inductanceControl,
-          capacitanceControl,
-          sourceVoltageControl,
-          frequencyControl,
-          timeControl,
-          resetAllButton,
-        ],
-      }),
-    );
+    // Traversal order, split into the standard play-area and control-area
+    // regions so screen readers can jump between them.
+    this.pdomPlayAreaNode.pdomOrder = [
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
+    ];
+    this.pdomControlAreaNode.pdomOrder = [timeControl, resetAllButton];
 
     this.updateAnimation();
   }
@@ -482,6 +484,7 @@ export class PowerScreenView extends ScreenView {
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
+    this.screenSummaryContent?.dispose();
     super.dispose();
   }
 }

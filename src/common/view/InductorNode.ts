@@ -47,6 +47,7 @@ import {
   INDUCTOR_FLUX_LOOP_SPACING,
 } from "../../ACPhasorConstants.js";
 import { StringManager } from "../../i18n/StringManager.js";
+import { ELEMENT_SYMBOL_FONT } from "../ACPhasorFonts.js";
 import { CircuitElementNode } from "./CircuitElementNode.js";
 
 type InductorNodeSelfOptions = {
@@ -249,7 +250,7 @@ export class InductorNode extends CircuitElementNode {
     // never crowds it.
     this.addChild(
       new Text(StringManager.getInstance().getLabels().inductorSymbolStringProperty, {
-        font: "italic bold 15px sans-serif",
+        font: ELEMENT_SYMBOL_FONT,
         fill: ACPhasorColors.inductorColorProperty,
         centerX: 0,
         bottom: -Math.max(options.coilRadius + 6, maxLoopRadius * FLUX_LOOP_ASPECT + 5),
