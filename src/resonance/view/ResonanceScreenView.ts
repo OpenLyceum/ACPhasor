@@ -213,55 +213,57 @@ export class ResonanceScreenView extends ScreenView {
       visibleProperty: model.isAtResonanceProperty,
     });
 
+    const readoutRows = [
+      new ACPhasorReadout(
+        labels.resonantFrequencyStringProperty,
+        model.resonantFrequencyProperty,
+        labels.hertzPatternStringProperty,
+        new Range(0, 100),
+        2,
+      ),
+      new ACPhasorReadout(
+        labels.qualityFactorStringProperty,
+        model.qualityFactorProperty,
+        labels.plainPatternStringProperty,
+        new Range(0, 100),
+        2,
+      ),
+      new ACPhasorReadout(
+        labels.bandwidthStringProperty,
+        model.bandwidthProperty,
+        labels.hertzPatternStringProperty,
+        new Range(0, 1000),
+        2,
+      ),
+      new ACPhasorReadout(
+        labels.impedanceStringProperty,
+        impedanceMagnitude,
+        labels.ohmsPatternStringProperty,
+        new Range(0, 10000),
+        1,
+      ),
+      new ACPhasorReadout(
+        labels.currentAmplitudeStringProperty,
+        model.currentAmplitudeProperty,
+        labels.amperesPatternStringProperty,
+        new Range(0, 100),
+        3,
+      ),
+      new ACPhasorReadout(
+        labels.phaseStringProperty,
+        phaseDegrees,
+        labels.degreesPatternStringProperty,
+        new Range(-90, 90),
+        0,
+      ),
+      resonanceBadge,
+    ];
+    this.disposables.push(...readoutRows);
     const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,
-        children: [
-          new ACPhasorReadout(
-            labels.resonantFrequencyStringProperty,
-            model.resonantFrequencyProperty,
-            labels.hertzPatternStringProperty,
-            new Range(0, 100),
-            2,
-          ),
-          new ACPhasorReadout(
-            labels.qualityFactorStringProperty,
-            model.qualityFactorProperty,
-            labels.plainPatternStringProperty,
-            new Range(0, 100),
-            2,
-          ),
-          new ACPhasorReadout(
-            labels.bandwidthStringProperty,
-            model.bandwidthProperty,
-            labels.hertzPatternStringProperty,
-            new Range(0, 1000),
-            2,
-          ),
-          new ACPhasorReadout(
-            labels.impedanceStringProperty,
-            impedanceMagnitude,
-            labels.ohmsPatternStringProperty,
-            new Range(0, 10000),
-            1,
-          ),
-          new ACPhasorReadout(
-            labels.currentAmplitudeStringProperty,
-            model.currentAmplitudeProperty,
-            labels.amperesPatternStringProperty,
-            new Range(0, 100),
-            3,
-          ),
-          new ACPhasorReadout(
-            labels.phaseStringProperty,
-            phaseDegrees,
-            labels.degreesPatternStringProperty,
-            new Range(-90, 90),
-            0,
-          ),
-          resonanceBadge,
-        ],
+        children: readoutRows,
       }),
       { align: "left" },
     );
@@ -316,6 +318,13 @@ export class ResonanceScreenView extends ScreenView {
         logarithmic: true,
         accessibleName: a11y.controls.frequencyStringProperty,
       },
+    );
+    this.disposables.push(
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
     );
 
     const controlPanel = new ACPhasorPanel(
@@ -435,7 +444,8 @@ export class ResonanceScreenView extends ScreenView {
   }
 
   public override dispose(): void {
-    for (const disposable of this.disposables) {
+    // Reverse creation order: views unlink before the Properties they observe are disposed.
+    for (const disposable of [...this.disposables].reverse()) {
       disposable.dispose();
     }
     this.screenSummaryContent?.dispose();

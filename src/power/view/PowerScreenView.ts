@@ -271,47 +271,49 @@ export class PowerScreenView extends ScreenView {
     const phaseDegrees = new DerivedProperty([circuit.phaseProperty], (phase) => (phase * 180) / Math.PI);
     this.disposables.push(phaseDegrees);
 
+    const readoutRows = [
+      new ACPhasorReadout(
+        labels.realPowerStringProperty,
+        model.realPowerProperty,
+        labels.wattsPatternStringProperty,
+        new Range(0, 1000),
+        2,
+      ),
+      new ACPhasorReadout(
+        labels.reactivePowerStringProperty,
+        model.reactivePowerProperty,
+        labels.reactivePowerPatternStringProperty,
+        new Range(-1000, 1000),
+        2,
+      ),
+      new ACPhasorReadout(
+        labels.apparentPowerStringProperty,
+        model.apparentPowerProperty,
+        labels.voltAmperesPatternStringProperty,
+        new Range(0, 1000),
+        2,
+      ),
+      new ACPhasorReadout(
+        labels.powerFactorStringProperty,
+        model.powerFactorProperty,
+        labels.plainPatternStringProperty,
+        new Range(-1, 1),
+        3,
+      ),
+      new ACPhasorReadout(
+        labels.phaseStringProperty,
+        phaseDegrees,
+        labels.degreesPatternStringProperty,
+        new Range(-90, 90),
+        0,
+      ),
+    ];
+    this.disposables.push(...readoutRows);
     const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,
-        children: [
-          new ACPhasorReadout(
-            labels.realPowerStringProperty,
-            model.realPowerProperty,
-            labels.wattsPatternStringProperty,
-            new Range(0, 1000),
-            2,
-          ),
-          new ACPhasorReadout(
-            labels.reactivePowerStringProperty,
-            model.reactivePowerProperty,
-            labels.reactivePowerPatternStringProperty,
-            new Range(-1000, 1000),
-            2,
-          ),
-          new ACPhasorReadout(
-            labels.apparentPowerStringProperty,
-            model.apparentPowerProperty,
-            labels.voltAmperesPatternStringProperty,
-            new Range(0, 1000),
-            2,
-          ),
-          new ACPhasorReadout(
-            labels.powerFactorStringProperty,
-            model.powerFactorProperty,
-            labels.plainPatternStringProperty,
-            new Range(-1, 1),
-            3,
-          ),
-          new ACPhasorReadout(
-            labels.phaseStringProperty,
-            phaseDegrees,
-            labels.degreesPatternStringProperty,
-            new Range(-90, 90),
-            0,
-          ),
-        ],
+        children: readoutRows,
       }),
       { align: "left" },
     );
@@ -358,6 +360,13 @@ export class PowerScreenView extends ScreenView {
         accessibleName: a11y.controls.frequencyStringProperty,
       },
     );
+    this.disposables.push(
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
+    );
 
     const controlPanel = new ACPhasorPanel(
       new VBox({
@@ -387,6 +396,7 @@ export class PowerScreenView extends ScreenView {
       },
       bottom: this.layoutBounds.maxY - SCREEN_VIEW_MARGIN,
     });
+    this.disposables.push(timeControl);
 
     const resetAllButton = new ResetAllButton({
       ...FLAT_RESET_ALL_BUTTON_OPTIONS,
@@ -481,7 +491,8 @@ export class PowerScreenView extends ScreenView {
   }
 
   public override dispose(): void {
-    for (const disposable of this.disposables) {
+    // Reverse creation order: views unlink before the Properties they observe are disposed.
+    for (const disposable of [...this.disposables].reverse()) {
       disposable.dispose();
     }
     this.screenSummaryContent?.dispose();

@@ -191,6 +191,17 @@ export class PhasorNode extends Node {
         const tip = modelViewTransform.modelToViewPosition(modelTail.plus(phasor.toVector2()));
         this.arrowNode.setTailAndTip(tail.x, tail.y, tip.x, tip.y);
 
+        // A zero phasor (e.g. the current with a 0 V source) has nothing to show:
+        // hide the arrow head, label and projection rather than leave a stray head.
+        const hasAmplitude = phasor.amplitude > 0;
+        this.arrowNode.visible = hasAmplitude;
+        if (labelNode) {
+          labelNode.visible = hasAmplitude;
+        }
+        if (projectionLine) {
+          projectionLine.visible = hasAmplitude;
+        }
+
         if (projectionLine) {
           // Drop onto the axis through the phasor's own tail, so a chained phasor
           // projects against where it starts rather than against the origin.

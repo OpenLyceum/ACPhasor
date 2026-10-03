@@ -115,6 +115,11 @@ export class StringManager {
     return stringProperties.a11y.power;
   }
 
+  /** Accessible names and help for the configurable graph's controls. */
+  public getGraphA11yStrings() {
+    return stringProperties.a11y.graph;
+  }
+
   /**
    * Simulation-specific preference labels shown in Preferences → Simulation.
    */

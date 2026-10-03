@@ -145,6 +145,19 @@
         "sourceVoltage": "Amplitude de la tension de source",
         "frequency": "Fréquence de la source"
       }
+    },
+    "graph": {
+      "rescale": "Ajuster aux données",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "panLeft": "Décaler à gauche",
+      "panRight": "Décaler à droite",
+      "panUp": "Décaler vers le haut",
+      "panDown": "Décaler vers le bas",
+      "move": "Déplacer le graphique",
+      "moveHelp": "Utilisez les flèches pour déplacer le graphique sur l'écran.",
+      "resize": "Redimensionner le graphique",
+      "resizeHelp": "Utilisez les flèches gauche et droite pour changer la largeur, et les flèches haut et bas pour changer la hauteur."
     }
   },
   "preferences": {

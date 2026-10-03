@@ -25,6 +25,7 @@ import { Phasor } from "../src/common/model/Phasor.js";
 import { RlcCircuitModel } from "../src/common/model/RlcCircuitModel.js";
 import { TimeModel } from "../src/common/TimeModel.js";
 import { ACPhasorNumberControl } from "../src/common/view/ACPhasorNumberControl.js";
+import { ACPhasorReadout } from "../src/common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../src/common/view/CircuitDiagramNode.js";
 import { ConfigurableGraph } from "../src/common/view/graph/ConfigurableGraph.js";
 import type { PlottableProperty } from "../src/common/view/graph/PlottableProperty.js";
@@ -366,6 +367,31 @@ describe("Memory leak regression", () => {
       expect(frequencyProperty.hasListeners()).toBe(false);
       frequencyProperty.value = 2;
       expect(frequencyProperty.value).toBe(2);
+    });
+
+    it("ACPhasorReadout exposes its value to the PDOM and unlinks on dispose", () => {
+      const valueProperty = new Property(12.345);
+      const readout = new ACPhasorReadout(
+        new StringProperty("Impedance"),
+        valueProperty,
+        new StringProperty("{{value}} Ω"),
+        new Range(0, 100),
+        1,
+      );
+      expect(readout.accessibleParagraph).toBe("Impedance 12.3 Ω");
+      expect(valueProperty.hasListeners()).toBe(true);
+
+      readout.dispose();
+      expect(valueProperty.hasListeners()).toBe(false);
+    });
+
+    it("a zero phasor draws no arrow", () => {
+      const phasorProperty = new Property(new Phasor(1, 0));
+      const node = new PhasorNode(phasorProperty, modelViewTransform);
+      expect(node.children.some((child) => child.visible && child.bounds.isValid())).toBe(true);
+      phasorProperty.value = Phasor.ZERO;
+      expect(node.children.every((child) => !(child.visible && child.bounds.isValid()))).toBe(true);
+      node.dispose();
     });
   });
 });

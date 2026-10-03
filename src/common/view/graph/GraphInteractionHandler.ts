@@ -14,6 +14,7 @@ import type { ChartRectangle, ChartTransform, TickLabelSet } from "scenerystack/
 import { Range, Vector2 } from "scenerystack/dot";
 import {
   DragListener,
+  KeyboardListener,
   type Node,
   type Pointer,
   Rectangle,
@@ -22,7 +23,41 @@ import {
 } from "scenerystack/scenery";
 import ACPhasorColors from "../../../ACPhasorColors.js";
 import ACPhasorNamespace from "../../../ACPhasorNamespace.js";
+import { StringManager } from "../../../i18n/StringManager.js";
 import type { GraphDataManager } from "./GraphDataManager.js";
+
+/**
+ * Smallest finger separation (view px) used when computing a pinch zoom factor.
+ * Two touches can meet exactly, and dividing by a zero distance would hand the
+ * chart ±Infinity axis ranges.
+ */
+const MIN_PINCH_DISTANCE = 1;
+
+/** Smallest graph a resize can produce, view px. */
+const MIN_GRAPH_WIDTH = 200;
+const MIN_GRAPH_HEIGHT = 150;
+
+/** View px per arrow press when moving or resizing the graph from the keyboard. */
+const KEYBOARD_MOVE_STEP = 10;
+const KEYBOARD_RESIZE_STEP = 10;
+
+const ARROW_KEYS = ["arrowLeft", "arrowRight", "arrowUp", "arrowDown"] as const;
+
+/** Screen-space step (y down) for one press of an arrow key. */
+function arrowDelta(key: string, step: number): Vector2 {
+  switch (key) {
+    case "arrowLeft":
+      return new Vector2(-step, 0);
+    case "arrowRight":
+      return new Vector2(step, 0);
+    case "arrowUp":
+      return new Vector2(0, -step);
+    case "arrowDown":
+      return new Vector2(0, step);
+    default:
+      return Vector2.ZERO;
+  }
+}
 
 /**
  * Configuration for the chart and its data management
@@ -304,7 +339,7 @@ export class GraphInteractionHandler {
             const currentDistance = point0.distance(point1);
 
             // Calculate zoom factor from distance ratio
-            const zoomFactor = initialDistance / currentDistance;
+            const zoomFactor = initialDistance / Math.max(currentDistance, MIN_PINCH_DISTANCE);
 
             // Convert initial midpoint to model coordinates
             const initialModelCenter = this.chartTransform.viewToModelPosition(initialMidpoint);
@@ -420,7 +455,7 @@ export class GraphInteractionHandler {
             const currentYDistance = Math.abs(point0.y - point1.y);
 
             // Calculate zoom factor from Y-distance ratio
-            const zoomFactor = initialYDistance / currentYDistance;
+            const zoomFactor = initialYDistance / Math.max(currentYDistance, MIN_PINCH_DISTANCE);
 
             // Convert initial midpoint Y to model coordinates
             const viewMidpoint = new Vector2(this.graphWidth / 2, initialYMidpoint);
@@ -606,7 +641,7 @@ export class GraphInteractionHandler {
             const currentXDistance = Math.abs(point0.x - point1.x);
 
             // Calculate zoom factor from X-distance ratio
-            const zoomFactor = initialXDistance / currentXDistance;
+            const zoomFactor = initialXDistance / Math.max(currentXDistance, MIN_PINCH_DISTANCE);
 
             // Convert initial midpoint X to model coordinates
             const viewMidpoint = new Vector2(initialXMidpoint, this.graphHeight / 2);
@@ -758,6 +793,28 @@ export class GraphInteractionHandler {
     });
 
     this.attach(this.headerBar, dragListener);
+
+    // Keyboard equivalent: the header is a focusable "move" control driven by the arrows.
+    const graphA11y = StringManager.getInstance().getGraphA11yStrings();
+    this.headerBar.tagName = "div";
+    this.headerBar.focusable = true;
+    this.headerBar.accessibleName = graphA11y.moveStringProperty;
+    this.headerBar.accessibleHelpText = graphA11y.moveHelpStringProperty;
+    this.attach(
+      this.headerBar,
+      new KeyboardListener({
+        keys: ARROW_KEYS,
+        fireOnHold: true,
+        fire: (_event, keysPressed) => {
+          const delta = arrowDelta(keysPressed, KEYBOARD_MOVE_STEP);
+          // Flag the drag so the graph records its home position before it first moves.
+          this.isDraggingProperty.value = true;
+          this.graphNode.x += delta.x;
+          this.graphNode.y += delta.y;
+          this.isDraggingProperty.value = false;
+        },
+      }),
+    );
   }
 
   /**
@@ -786,6 +843,30 @@ export class GraphInteractionHandler {
       this.resizeHandles.push(handle);
       this.setupResizeHandleDrag(handle, index);
     });
+
+    // Keyboard equivalent on the bottom-right corner, which resizes without moving the graph.
+    const bottomRight = this.resizeHandles[3];
+    if (bottomRight) {
+      const graphA11y = StringManager.getInstance().getGraphA11yStrings();
+      bottomRight.tagName = "div";
+      bottomRight.focusable = true;
+      bottomRight.accessibleName = graphA11y.resizeStringProperty;
+      bottomRight.accessibleHelpText = graphA11y.resizeHelpStringProperty;
+      this.attach(
+        bottomRight,
+        new KeyboardListener({
+          keys: ARROW_KEYS,
+          fireOnHold: true,
+          fire: (_event, keysPressed) => {
+            const delta = arrowDelta(keysPressed, KEYBOARD_RESIZE_STEP);
+            this.onResize(
+              Math.max(MIN_GRAPH_WIDTH, this.graphWidth + delta.x),
+              Math.max(MIN_GRAPH_HEIGHT, this.graphHeight + delta.y),
+            );
+          },
+        }),
+      );
+    }
 
     return this.resizeHandles;
   }
@@ -826,8 +907,8 @@ export class GraphInteractionHandler {
         let deltaY = 0;
 
         // Minimum graph size
-        const minWidth = 200;
-        const minHeight = 150;
+        const minWidth = MIN_GRAPH_WIDTH;
+        const minHeight = MIN_GRAPH_HEIGHT;
 
         // Handle different corners
         switch (cornerIndex) {

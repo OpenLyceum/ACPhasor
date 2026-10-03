@@ -10,7 +10,7 @@
 
 import { BooleanProperty, DerivedProperty, Property, type TReadOnlyProperty } from "scenerystack/axon";
 import { ChartRectangle, ChartTransform, GridLineSet, LinePlot, TickLabelSet, TickMarkSet } from "scenerystack/bamboo";
-import { Range, toFixed } from "scenerystack/dot";
+import { Range, toFixed, type Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { Orientation } from "scenerystack/phet-core";
 import { StringUtils } from "scenerystack/phetcommon";
@@ -63,6 +63,8 @@ export class ConfigurableGraph extends Node {
   // Drag and resize UI components
   private readonly headerBar;
   private readonly isDraggingProperty: BooleanProperty;
+  /** Where the graph sat before its first drag; null until it has been dragged. */
+  private homeTranslation: Vector2 | null = null;
   private readonly isResizingProperty: BooleanProperty;
 
   // Trail points
@@ -294,7 +296,8 @@ export class ConfigurableGraph extends Node {
     const buttonSpacing = BUTTON_SPACING;
 
     // Helper function to create a button
-    const createButton = (label: string, onClick: () => void): Node => {
+    const graphA11y = StringManager.getInstance().getGraphA11yStrings();
+    const createButton = (label: string, accessibleName: TReadOnlyProperty<string>, onClick: () => void): Node => {
       const buttonText = new Text(label, {
         font: BUTTON_FONT,
         fill: ACPhasorColors.panelBorderColorProperty,
@@ -306,8 +309,12 @@ export class ConfigurableGraph extends Node {
         cursor: "pointer",
       });
 
+      // A real <button> in the PDOM: focusable, named, and fired by Enter/Space
+      // through the FireListener below, so the graph works from the keyboard.
       const button = new Node({
         children: [buttonBackground, buttonText],
+        tagName: "button",
+        accessibleName: accessibleName,
       });
 
       // Center the text in the button
@@ -334,35 +341,35 @@ export class ConfigurableGraph extends Node {
     };
 
     // Create rescale button
-    this.rescaleButton = createButton("↻", () => {
+    this.rescaleButton = createButton("↻", graphA11y.rescaleStringProperty, () => {
       // Reset manual zoom flag and rescale to fit data
       this.dataManager.setManuallyZoomed(false);
       this.dataManager.updateAxisRanges();
     });
 
     // Create zoom buttons (will be wired up after interactionHandler is created)
-    const zoomInButton = createButton("+", () => {
+    const zoomInButton = createButton("+", graphA11y.zoomInStringProperty, () => {
       this.interactionHandler.zoomIn();
     });
 
-    const zoomOutButton = createButton("−", () => {
+    const zoomOutButton = createButton("−", graphA11y.zoomOutStringProperty, () => {
       this.interactionHandler.zoomOut();
     });
 
     // Create pan buttons (will be wired up after interactionHandler is created)
-    const panLeftButton = createButton("←", () => {
+    const panLeftButton = createButton("←", graphA11y.panLeftStringProperty, () => {
       this.interactionHandler.pan("left");
     });
 
-    const panRightButton = createButton("→", () => {
+    const panRightButton = createButton("→", graphA11y.panRightStringProperty, () => {
       this.interactionHandler.pan("right");
     });
 
-    const panUpButton = createButton("↑", () => {
+    const panUpButton = createButton("↑", graphA11y.panUpStringProperty, () => {
       this.interactionHandler.pan("up");
     });
 
-    const panDownButton = createButton("↓", () => {
+    const panDownButton = createButton("↓", graphA11y.panDownStringProperty, () => {
       this.interactionHandler.pan("down");
     });
 
@@ -449,6 +456,13 @@ export class ConfigurableGraph extends Node {
     });
 
     // Add visual feedback for drag and resize operations
+    // The screen positions the graph after constructing it, so the home position is
+    // whatever it holds when the student first starts dragging it; Reset All returns there.
+    this.isDraggingProperty.lazyLink((isDragging) => {
+      if (isDragging && this.homeTranslation === null) {
+        this.homeTranslation = this.translation.copy();
+      }
+    });
     this.isDraggingProperty.link((isDragging) => {
       this.opacity = isDragging ? 0.8 : 1.0;
       this.headerBar.cursor = isDragging ? "grabbing" : "grab";
@@ -570,6 +584,15 @@ export class ConfigurableGraph extends Node {
     // Reset graph size to initial dimensions if it has been resized
     if (this.graphWidth !== this.initialWidth || this.graphHeight !== this.initialHeight) {
       this.resizeGraph(this.initialWidth, this.initialHeight);
+    }
+
+    // Restore the chosen quantities and the dragged position. Resetting the axis
+    // Properties clears the data through their lazyLinks; clearData() below covers
+    // the case where they were already at their defaults.
+    this.xPropertyProperty.reset();
+    this.yPropertyProperty.reset();
+    if (this.homeTranslation !== null) {
+      this.translation = this.homeTranslation;
     }
 
     // Clear all data

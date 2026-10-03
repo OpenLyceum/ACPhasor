@@ -297,6 +297,13 @@ export class IntroScreenView extends ScreenView {
         accessibleName: a11y.controls.frequencyStringProperty,
       },
     );
+    this.disposables.push(
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
+    );
 
     const controlPanel = new ACPhasorPanel(
       new VBox({
@@ -315,26 +322,28 @@ export class IntroScreenView extends ScreenView {
       (phaseDifference) => (phaseDifference * 180) / Math.PI,
     );
     this.disposables.push(impedanceMagnitude, phaseDegrees, this.circuit);
+    const readoutRows = [
+      new ACPhasorReadout(
+        labels.impedanceStringProperty,
+        impedanceMagnitude,
+        labels.ohmsPatternStringProperty,
+        new Range(0, 10000),
+        1,
+      ),
+      new ACPhasorReadout(
+        labels.phaseStringProperty,
+        phaseDegrees,
+        labels.degreesPatternStringProperty,
+        new Range(-90, 90),
+        0,
+      ),
+    ];
+    this.disposables.push(...readoutRows);
     const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,
-        children: [
-          new ACPhasorReadout(
-            labels.impedanceStringProperty,
-            impedanceMagnitude,
-            labels.ohmsPatternStringProperty,
-            new Range(0, 10000),
-            1,
-          ),
-          new ACPhasorReadout(
-            labels.phaseStringProperty,
-            phaseDegrees,
-            labels.degreesPatternStringProperty,
-            new Range(-90, 90),
-            0,
-          ),
-        ],
+        children: readoutRows,
       }),
       { align: "left" },
     );
@@ -364,6 +373,7 @@ export class IntroScreenView extends ScreenView {
       },
       bottom: this.layoutBounds.maxY - SCREEN_VIEW_MARGIN,
     });
+    this.disposables.push(timeControl);
 
     const resetAllButton = new ResetAllButton({
       ...FLAT_RESET_ALL_BUTTON_OPTIONS,
@@ -420,11 +430,15 @@ export class IntroScreenView extends ScreenView {
     const time = this.model.timer.timeProperty.value;
     const drivePhase = this.model.source.drivePhaseProperty.value;
     const angularFrequency = this.model.source.angularFrequencyProperty.value;
-    const voltagePhase = this.model.voltagePhasorProperty.value.phase;
-    const currentPhase = this.model.currentPhasorProperty.value.phase;
+    const voltage = this.model.voltagePhasorProperty.value;
+    const current = this.model.currentPhasorProperty.value;
 
-    this.displayVoltageProperty.value = new Phasor(DIAL_VOLTAGE_ARROW_LENGTH, voltagePhase + drivePhase);
-    this.displayCurrentProperty.value = new Phasor(DIAL_CURRENT_ARROW_LENGTH, currentPhase + drivePhase);
+    // The arrows have fixed display lengths (volts and amps share no scale), but a
+    // zero amplitude must still draw no arrow — at 0 V there is no current to show.
+    const voltageLength = voltage.amplitude > 0 ? DIAL_VOLTAGE_ARROW_LENGTH : 0;
+    const currentLength = current.amplitude > 0 ? DIAL_CURRENT_ARROW_LENGTH : 0;
+    this.displayVoltageProperty.value = new Phasor(voltageLength, voltage.phase + drivePhase);
+    this.displayCurrentProperty.value = new Phasor(currentLength, current.phase + drivePhase);
 
     this.scope.setCursorTime(time, drivePhase);
 
@@ -440,7 +454,8 @@ export class IntroScreenView extends ScreenView {
   }
 
   public override dispose(): void {
-    for (const disposable of this.disposables) {
+    // Reverse creation order: views unlink before the Properties they observe are disposed.
+    for (const disposable of [...this.disposables].reverse()) {
       disposable.dispose();
     }
     this.screenSummaryContent?.dispose();

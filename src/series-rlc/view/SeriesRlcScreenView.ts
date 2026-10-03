@@ -115,6 +115,8 @@ export class SeriesRlcScreenView extends ScreenView {
   private readonly displayCurrent = displayPhasorProperty();
 
   private readonly disposables: { dispose(): void }[] = [];
+  /** Whether the two triangles are drawn head to tail; restored by Reset All. */
+  private readonly tipToTailProperty: BooleanProperty;
 
   public constructor(model: SeriesRlcModel, providedOptions?: SeriesRlcScreenViewOptions) {
     const options = optionize<SeriesRlcScreenViewOptions, EmptySelfOptions, ScreenViewOptions>()(
@@ -137,6 +139,8 @@ export class SeriesRlcScreenView extends ScreenView {
 
     /** True draws both triangles head to tail; false collapses them to the origin. */
     const tipToTailProperty = new BooleanProperty(true);
+    this.tipToTailProperty = tipToTailProperty;
+    this.disposables.push(tipToTailProperty);
 
     // ── Circuit diagram (R–L–C loop with flowing charges) ───────────────────
     // Across the top: each part shows its own value (bands, windings, plate
@@ -339,6 +343,13 @@ export class SeriesRlcScreenView extends ScreenView {
         accessibleName: a11y.controls.frequencyStringProperty,
       },
     );
+    this.disposables.push(
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
+    );
 
     const controlPanel = new ACPhasorPanel(
       new VBox({
@@ -362,41 +373,43 @@ export class SeriesRlcScreenView extends ScreenView {
       visibleProperty: model.isAtResonanceProperty,
     });
 
+    const readoutRows = [
+      new ACPhasorReadout(
+        labels.impedanceStringProperty,
+        impedanceMagnitude,
+        labels.ohmsPatternStringProperty,
+        new Range(0, 1000),
+        1,
+      ),
+      new ACPhasorReadout(
+        labels.reactanceStringProperty,
+        model.reactanceProperty,
+        labels.ohmsPatternStringProperty,
+        new Range(-1000, 1000),
+        1,
+      ),
+      new ACPhasorReadout(
+        labels.phaseStringProperty,
+        phaseDegrees,
+        labels.degreesPatternStringProperty,
+        new Range(-90, 90),
+        0,
+      ),
+      new ACPhasorReadout(
+        labels.resonantFrequencyStringProperty,
+        model.resonantFrequencyProperty,
+        labels.hertzPatternStringProperty,
+        new Range(0, 100),
+        2,
+      ),
+      resonanceBadge,
+    ];
+    this.disposables.push(...readoutRows);
     const readoutPanel = new ACPhasorPanel(
       new VBox({
         align: "left",
         spacing: 8,
-        children: [
-          new ACPhasorReadout(
-            labels.impedanceStringProperty,
-            impedanceMagnitude,
-            labels.ohmsPatternStringProperty,
-            new Range(0, 1000),
-            1,
-          ),
-          new ACPhasorReadout(
-            labels.reactanceStringProperty,
-            model.reactanceProperty,
-            labels.ohmsPatternStringProperty,
-            new Range(-1000, 1000),
-            1,
-          ),
-          new ACPhasorReadout(
-            labels.phaseStringProperty,
-            phaseDegrees,
-            labels.degreesPatternStringProperty,
-            new Range(-90, 90),
-            0,
-          ),
-          new ACPhasorReadout(
-            labels.resonantFrequencyStringProperty,
-            model.resonantFrequencyProperty,
-            labels.hertzPatternStringProperty,
-            new Range(0, 100),
-            2,
-          ),
-          resonanceBadge,
-        ],
+        children: readoutRows,
       }),
       { align: "left" },
     );
@@ -423,6 +436,7 @@ export class SeriesRlcScreenView extends ScreenView {
       },
       bottom: this.layoutBounds.maxY - SCREEN_VIEW_MARGIN,
     });
+    this.disposables.push(timeControl);
 
     const resetAllButton = new ResetAllButton({
       ...FLAT_RESET_ALL_BUTTON_OPTIONS,
@@ -581,14 +595,16 @@ export class SeriesRlcScreenView extends ScreenView {
     this.displayResistor.value = resistor.scaled(scale).rotated(drivePhase);
     this.displayInductor.value = inductor.scaled(scale).rotated(drivePhase);
     this.displayCapacitor.value = capacitor.scaled(scale).rotated(drivePhase);
-    // Amps and volts share no scale, so the current gets its own.
-    this.displayCurrent.value = new Phasor(CURRENT_TARGET, current.phase + drivePhase);
+    // Amps and volts share no scale, so the current gets its own fixed length,
+    // except that zero current (e.g. a 0 V source) draws no arrow at all.
+    this.displayCurrent.value = new Phasor(current.amplitude > 0 ? CURRENT_TARGET : 0, current.phase + drivePhase);
 
     this.scope.setCursorTime(time, drivePhase);
     this.circuit.setState(current, angularFrequency, drivePhase);
   }
 
   public reset(): void {
+    this.tipToTailProperty.reset();
     this.updateRotatingPhasors();
     this.graph.reset();
   }
@@ -602,7 +618,8 @@ export class SeriesRlcScreenView extends ScreenView {
   }
 
   public override dispose(): void {
-    for (const disposable of this.disposables) {
+    // Reverse creation order: views unlink before the Properties they observe are disposed.
+    for (const disposable of [...this.disposables].reverse()) {
       disposable.dispose();
     }
     this.screenSummaryContent?.dispose();

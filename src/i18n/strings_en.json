@@ -145,6 +145,19 @@
         "sourceVoltage": "Source voltage amplitude",
         "frequency": "Source frequency"
       }
+    },
+    "graph": {
+      "rescale": "Rescale to fit the data",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "panLeft": "Pan left",
+      "panRight": "Pan right",
+      "panUp": "Pan up",
+      "panDown": "Pan down",
+      "move": "Move graph",
+      "moveHelp": "Use the arrow keys to move the graph around the screen.",
+      "resize": "Resize graph",
+      "resizeHelp": "Use the left and right arrow keys to change the width, and the up and down arrow keys to change the height."
     }
   },
   "preferences": {
