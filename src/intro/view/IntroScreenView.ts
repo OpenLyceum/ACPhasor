@@ -15,7 +15,7 @@ import { DerivedProperty, Multilink, Property } from "scenerystack/axon";
 import { Range } from "scenerystack/dot";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import type { Color } from "scenerystack/scenery";
-import { Node, Rectangle, VBox } from "scenerystack/scenery";
+import { type Node, Rectangle, VBox } from "scenerystack/scenery";
 import { ResetAllButton, TimeControlNode } from "scenerystack/scenery-phet";
 import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import { RectangularRadioButtonGroup } from "scenerystack/sun";
@@ -407,18 +407,10 @@ export class IntroScreenView extends ScreenView {
       ),
     );
 
-    this.addChild(
-      new Node({
-        pdomOrder: [
-          componentGroup,
-          valueControlSlot,
-          sourceVoltageControl,
-          frequencyControl,
-          timeControl,
-          resetAllButton,
-        ],
-      }),
-    );
+    // Traversal order, split into the standard play-area and control-area
+    // regions so screen readers can jump between them.
+    this.pdomPlayAreaNode.pdomOrder = [componentGroup, valueControlSlot, sourceVoltageControl, frequencyControl];
+    this.pdomControlAreaNode.pdomOrder = [timeControl, resetAllButton];
 
     this.updatePhasorClock();
   }
@@ -451,6 +443,7 @@ export class IntroScreenView extends ScreenView {
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
+    this.screenSummaryContent?.dispose();
     super.dispose();
   }
 }

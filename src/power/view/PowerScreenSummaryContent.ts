@@ -6,12 +6,15 @@
  * essentially unity, lagging (inductive), or leading (capacitive) — the three
  * cases the power triangle and the shaded p(t) trace are showing.
  */
-import { DerivedProperty } from "scenerystack/axon";
+import { DerivedProperty, type ReadOnlyProperty } from "scenerystack/axon";
 import { ScreenSummaryContent } from "scenerystack/sim";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { PowerModel } from "../model/PowerModel.js";
 
 export class PowerScreenSummaryContent extends ScreenSummaryContent {
+  /** Live current-details sentence; derived here, so disposed here. */
+  private readonly currentDetailsProperty: ReadOnlyProperty<string>;
+
   public constructor(model: PowerModel) {
     const a11y = StringManager.getInstance().getPowerA11yStrings();
 
@@ -41,5 +44,11 @@ export class PowerScreenSummaryContent extends ScreenSummaryContent {
       currentDetailsContent: currentDetails,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
+    this.currentDetailsProperty = currentDetails;
+  }
+
+  public override dispose(): void {
+    this.currentDetailsProperty.dispose();
+    super.dispose();
   }
 }

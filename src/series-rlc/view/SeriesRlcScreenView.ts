@@ -18,7 +18,7 @@
 import { BooleanProperty, DerivedProperty, Multilink, Property } from "scenerystack/axon";
 import { Range, Vector2 } from "scenerystack/dot";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
-import { HBox, Node, Rectangle, Text, VBox } from "scenerystack/scenery";
+import { HBox, Rectangle, Text, VBox } from "scenerystack/scenery";
 import { ResetAllButton, TimeControlNode } from "scenerystack/scenery-phet";
 import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import { Checkbox, RectangularPushButton } from "scenerystack/sun";
@@ -184,6 +184,7 @@ export class SeriesRlcScreenView extends ScreenView {
       {
         tipToTailProperty: tipToTailProperty,
         resultant: { property: this.displaySource, fill: ACPhasorColors.textColorProperty, label: "V" },
+        labelSides: true,
       },
     );
     voltageDiagram.addChild(voltageChain);
@@ -225,6 +226,7 @@ export class SeriesRlcScreenView extends ScreenView {
       {
         tipToTailProperty: tipToTailProperty,
         resultant: { property: displayImpedance, fill: ACPhasorColors.impedanceColorProperty, label: "Z" },
+        labelSides: true,
       },
     );
     impedanceDiagram.addChild(impedanceChain);
@@ -293,7 +295,7 @@ export class SeriesRlcScreenView extends ScreenView {
       ],
     });
     this.scope.left = SCREEN_VIEW_MARGIN + 40;
-    this.scope.top = tipToTailCheckbox.bottom + 26;
+    this.scope.top = tipToTailCheckbox.bottom + 14;
 
     // ── Control panel ───────────────────────────────────────────────────────
     const resistanceControl = new ACPhasorNumberControl(
@@ -402,6 +404,9 @@ export class SeriesRlcScreenView extends ScreenView {
     // the two triangles, and the right-hand column is already full of sliders.
     readoutPanel.left = diagramRow.right + 25;
     readoutPanel.top = diagramRow.top + 16;
+    // Longer translations (French) would run under the control panel; shrink
+    // the readouts to the gap instead.
+    readoutPanel.maxWidth = controlPanel.left - 10 - readoutPanel.left;
 
     // ── Time control + reset ────────────────────────────────────────────────
     const timeControl = new TimeControlNode(model.timer.isPlayingProperty, {
@@ -475,7 +480,7 @@ export class SeriesRlcScreenView extends ScreenView {
       this,
     );
     this.graph.left = SCREEN_VIEW_MARGIN + 40;
-    this.graph.top = tipToTailCheckbox.bottom + 26;
+    this.graph.top = tipToTailCheckbox.bottom + 14;
     this.disposables.push(this.graph);
 
     const graphToggleButton = new RectangularPushButton({
@@ -488,10 +493,12 @@ export class SeriesRlcScreenView extends ScreenView {
           this.graph.clearData();
         }
       },
-      left: SCREEN_VIEW_MARGIN + 40,
-      top: this.layoutBounds.maxY - SCREEN_VIEW_MARGIN - 30,
       accessibleName: a11y.controls.graphStringProperty,
     });
+    // Beside the checkbox, in the free row above the scope: at the scope's lower
+    // left it sat on the −5 and −10 tick labels.
+    graphToggleButton.left = tipToTailCheckbox.right + 24;
+    graphToggleButton.centerY = tipToTailCheckbox.centerY;
 
     this.addChild(this.circuit);
     this.addChild(diagramRow);
@@ -535,21 +542,16 @@ export class SeriesRlcScreenView extends ScreenView {
       ),
     );
 
-    this.addChild(
-      new Node({
-        pdomOrder: [
-          resistanceControl,
-          inductanceControl,
-          capacitanceControl,
-          sourceVoltageControl,
-          frequencyControl,
-          tipToTailCheckbox,
-          graphToggleButton,
-          timeControl,
-          resetAllButton,
-        ],
-      }),
-    );
+    // Traversal order, split into the standard play-area and control-area
+    // regions so screen readers can jump between them.
+    this.pdomPlayAreaNode.pdomOrder = [
+      resistanceControl,
+      inductanceControl,
+      capacitanceControl,
+      sourceVoltageControl,
+      frequencyControl,
+    ];
+    this.pdomControlAreaNode.pdomOrder = [tipToTailCheckbox, graphToggleButton, timeControl, resetAllButton];
 
     this.updateRotatingPhasors();
   }
@@ -603,6 +605,7 @@ export class SeriesRlcScreenView extends ScreenView {
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
+    this.screenSummaryContent?.dispose();
     super.dispose();
   }
 }

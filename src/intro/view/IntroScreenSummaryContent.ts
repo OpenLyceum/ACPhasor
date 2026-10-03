@@ -5,12 +5,15 @@
  * The current-details sentence is live: it tracks the selected component so a
  * screen-reader user hears the correct phase relationship.
  */
-import { DerivedProperty } from "scenerystack/axon";
+import { DerivedProperty, type ReadOnlyProperty } from "scenerystack/axon";
 import { ScreenSummaryContent } from "scenerystack/sim";
 import { StringManager } from "../../i18n/StringManager.js";
 import type { IntroModel } from "../model/IntroModel.js";
 
 export class IntroScreenSummaryContent extends ScreenSummaryContent {
+  /** Live current-details sentence; derived here, so disposed here. */
+  private readonly currentDetailsProperty: ReadOnlyProperty<string>;
+
   public constructor(model: IntroModel) {
     const a11y = StringManager.getInstance().getIntroA11yStrings();
 
@@ -31,5 +34,11 @@ export class IntroScreenSummaryContent extends ScreenSummaryContent {
       currentDetailsContent: currentDetails,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
+    this.currentDetailsProperty = currentDetails;
+  }
+
+  public override dispose(): void {
+    this.currentDetailsProperty.dispose();
+    super.dispose();
   }
 }

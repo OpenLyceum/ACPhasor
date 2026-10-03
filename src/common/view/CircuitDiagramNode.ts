@@ -61,6 +61,7 @@ import {
   INDUCTOR_SATURATION_EMF_V,
 } from "../../ACPhasorConstants.js";
 import { StringManager } from "../../i18n/StringManager.js";
+import { SYMBOL_FONT } from "../ACPhasorFonts.js";
 import type { CircuitElementType } from "../model/Impedance.js";
 import type { Phasor } from "../model/Phasor.js";
 import { ACSourceNode } from "./ACSourceNode.js";
@@ -380,7 +381,7 @@ export class CircuitDiagramNode extends Node {
     this.addChild(this.currentArrow);
     this.addChild(
       new Text(StringManager.getInstance().getLabels().currentSymbolStringProperty, {
-        font: "italic 13px sans-serif",
+        font: SYMBOL_FONT,
         fill: wireColor,
         left: this.arrowCenterX + CURRENT_ARROW_LENGTH / 2 + 6,
         centerY: this.arrowY,

@@ -24,6 +24,7 @@ import { ModelViewTransform2 } from "scenerystack/phetcommon";
 import { Circle, Node, Path, type TColor, Text } from "scenerystack/scenery";
 import { ArrowNode } from "scenerystack/scenery-phet";
 import ACPhasorColors from "../../ACPhasorColors.js";
+import { AXIS_LABEL_FONT } from "../ACPhasorFonts.js";
 
 type PhasorDiagramNodeSelfOptions = {
   /** Half-extent of the plane in model units (the value mapped to the diagram edge). */
@@ -123,20 +124,22 @@ export class PhasorDiagramNode extends Node {
     this.addChild(new ArrowNode(0, center.y, 2 * options.viewRadius, center.y, axisOptions));
     this.addChild(new ArrowNode(center.x, 2 * options.viewRadius, center.x, 0, axisOptions));
 
-    // Axis labels near the positive ends.
+    // Axis labels near the positive ends. The real one sits just past its
+    // arrowhead, outside the dial: inside, it shared the corner where a
+    // triangle's reactive side and its label end up.
     if (options.realAxisLabel !== null) {
       this.addChild(
         new Text(options.realAxisLabel, {
-          font: "italic 14px sans-serif",
+          font: AXIS_LABEL_FONT,
           fill: options.axisColor,
-          rightCenter: new Vector2(2 * options.viewRadius - 4, center.y - 12),
+          leftCenter: new Vector2(2 * options.viewRadius + 4, center.y),
         }),
       );
     }
     if (options.imaginaryAxisLabel !== null) {
       this.addChild(
         new Text(options.imaginaryAxisLabel, {
-          font: "italic 14px sans-serif",
+          font: AXIS_LABEL_FONT,
           fill: options.axisColor,
           leftTop: new Vector2(center.x + 6, 2),
         }),
