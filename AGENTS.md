@@ -350,7 +350,9 @@ state and add `accessibleName`s to every interactive node. Full convention and c
 
 ## Compliance carve-outs
 
-Baton's compliance check passes. Two documented deviations:
+- `.github/workflows/ci.yml`: opts into required Knip CI after reviewing and clearing both default and production reports; retains the template workflow jobs and architecture checks.
+
+Baton's compliance check passes. Other documented deviations:
 
 - **IEC resistor band colors in `src/common/view/ResistorNode.ts`** (`BAND_COLORS`,
   `GOLD_BAND_COLOR`, `SILVER_BAND_COLOR`) are fixed standard codes, not themeable UI chrome.

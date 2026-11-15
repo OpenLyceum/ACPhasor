@@ -85,6 +85,7 @@ export function seriesRlcImpedance(
 /**
  * Resonant angular frequency ω₀ = 1/√(LC) (rad/s) of an LC pair — the frequency
  * at which inductive and capacitive reactances cancel.
+ * @internal Exported for direct unit testing; application callers use resonantFrequency.
  */
 export function resonantAngularFrequency(inductance: number, capacitance: number): number {
   return 1 / Math.sqrt(inductance * capacitance);

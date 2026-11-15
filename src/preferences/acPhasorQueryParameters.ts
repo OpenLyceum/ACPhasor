@@ -24,5 +24,3 @@ ACPhasorNamespace.register("acPhasorQueryParameters", acPhasorQueryParameters);
 
 // Log query parameters (for the console / PhET-iO).
 logGlobal("phet.chipper.queryParameters");
-
-export default acPhasorQueryParameters;
