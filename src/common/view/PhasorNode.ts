@@ -27,7 +27,7 @@
  *   } );
  */
 
-import { DerivedProperty, Multilink, Property, type TReadOnlyProperty } from "scenerystack/axon";
+import { Multilink, Property, type TReadOnlyProperty } from "scenerystack/axon";
 import { Vector2 } from "scenerystack/dot";
 import { optionize } from "scenerystack/phet-core";
 import type { ModelViewTransform2 } from "scenerystack/phetcommon";
@@ -37,7 +37,7 @@ import { PHASOR_LABEL_FONT } from "../ACPhasorFonts.js";
 import type { Phasor } from "../model/Phasor.js";
 
 /** Which axis a projection line drops to, or "none" for no construction line. */
-export type PhasorProjection = "none" | "real" | "imaginary";
+type PhasorProjection = "none" | "real" | "imaginary";
 
 type PhasorNodeSelfOptions = {
   /** Fill color of the arrow (and its label). */
@@ -241,15 +241,4 @@ export class PhasorNode extends Node {
     this.ownedAwayFromProperty?.dispose();
     super.dispose();
   }
-}
-
-/**
- * Convenience: a derived Property that projects the tip of a phasor to view
- * coordinates, handy when other nodes must track the same point.
- */
-export function phasorTipViewProperty(
-  phasorProperty: TReadOnlyProperty<Phasor>,
-  modelViewTransform: ModelViewTransform2,
-): TReadOnlyProperty<Vector2> {
-  return new DerivedProperty([phasorProperty], (phasor) => modelViewTransform.modelToViewPosition(phasor.toVector2()));
 }

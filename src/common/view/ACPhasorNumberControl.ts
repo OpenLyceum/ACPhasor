@@ -36,7 +36,7 @@ import ACPhasorColors from "../../ACPhasorColors.js";
 import { FLAT_RECTANGULAR_BUTTON_OPTIONS } from "../ACPhasorButtonOptions.js";
 import { CAPTION_FONT } from "../ACPhasorFonts.js";
 
-export type ACPhasorNumberControlSelfOptions = {
+type ACPhasorNumberControlSelfOptions = {
   /** Digits after the decimal point in the readout (default 1). */
   decimalPlaces?: number;
   /**

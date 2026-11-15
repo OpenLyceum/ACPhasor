@@ -62,7 +62,7 @@ import { Phasor } from "./Phasor.js";
  * omitted takes the sim-wide default from {@link ACPhasorConstants}; the ranges
  * are always the shared ones, so the controls behave identically everywhere.
  */
-export type RlcCircuitModelSelfOptions = {
+type RlcCircuitModelSelfOptions = {
   /** Initial resistance (Ω). */
   resistance?: number;
   /** Initial inductance (H). */

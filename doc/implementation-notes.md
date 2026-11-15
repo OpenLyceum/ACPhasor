@@ -92,4 +92,4 @@ Breaking any of them shows up as the whole screen jittering once per cycle.
    admittance and Q-factor additions there.
 2. Build the Power screen. `WaveformNode`'s multi-trace support covers most of what
    p(t) = v·i needs; shaded regions under a trace do not exist yet.
-3. Preferences → Simulation is hidden until the sim has real preferences; `ACPhasorPreferencesModel` / `ACPhasorPreferencesNode` are the empty hooks for them.
+3. Preferences → Simulation is hidden until the sim has real preferences; add preferences model/node hooks when needed.

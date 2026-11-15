@@ -91,10 +91,10 @@ const TIME_AXIS_GUTTER = 28;
 const CAPTION_GUTTER = 18;
 
 /** Which vertical axis a trace is read against. */
-export type WaveformAxis = "left" | "right";
+type WaveformAxis = "left" | "right";
 
 /** One sinusoid on the scope, with the caption and scaling that go with it. */
-export type WaveformTraceOptions = {
+type WaveformTraceOptions = {
   /** Trace color; the caption and playhead dot follow it. */
   stroke: TColor;
   /** Caption for this trace (e.g. "v(t)"). */

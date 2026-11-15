@@ -60,7 +60,7 @@ export function elementImpedance(type: CircuitElementType, value: number, angula
 }
 
 /** Total impedance of elements in series: Z = Z₁ + Z₂ + … (complex sum). */
-export function seriesImpedance(...impedances: Complex[]): Complex {
+function seriesImpedance(...impedances: Complex[]): Complex {
   return impedances.reduce((sum, z) => sum.plus(z), Complex.ZERO);
 }
 

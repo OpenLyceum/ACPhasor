@@ -39,7 +39,7 @@ import {
 } from "../../ACPhasorConstants.js";
 import { Phasor } from "./Phasor.js";
 
-export type ACSourceModelSelfOptions = {
+type ACSourceModelSelfOptions = {
   /** Initial peak amplitude V₀ in volts. */
   amplitude?: number;
   /** Allowed amplitude range in volts. */
