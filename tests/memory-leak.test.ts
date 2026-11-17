@@ -28,6 +28,7 @@ import { ACPhasorNumberControl } from "../src/common/view/ACPhasorNumberControl.
 import { ACPhasorReadout } from "../src/common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../src/common/view/CircuitDiagramNode.js";
 import { ConfigurableGraph } from "../src/common/view/graph/ConfigurableGraph.js";
+import { GraphControlsPanel } from "../src/common/view/graph/GraphControlsPanel.js";
 import type { PlottableProperty } from "../src/common/view/graph/PlottableProperty.js";
 import { InductorNode } from "../src/common/view/InductorNode.js";
 import { PhaseArcNode } from "../src/common/view/PhaseArcNode.js";
@@ -35,10 +36,24 @@ import { PhasorChainNode } from "../src/common/view/PhasorChainNode.js";
 import { PhasorNode } from "../src/common/view/PhasorNode.js";
 import { ResistorNode } from "../src/common/view/ResistorNode.js";
 import { IntroModel } from "../src/intro/model/IntroModel.js";
+import { IntroScreenSummaryContent } from "../src/intro/view/IntroScreenSummaryContent.js";
 import { PowerModel } from "../src/power/model/PowerModel.js";
+import { PowerScreenSummaryContent } from "../src/power/view/PowerScreenSummaryContent.js";
 import { ResonanceModel } from "../src/resonance/model/ResonanceModel.js";
+import { ResonanceScreenSummaryContent } from "../src/resonance/view/ResonanceScreenSummaryContent.js";
 import { SeriesRlcModel } from "../src/series-rlc/model/SeriesRlcModel.js";
+import { SeriesRlcScreenSummaryContent } from "../src/series-rlc/view/SeriesRlcScreenSummaryContent.js";
 import { describeDisposalLeaks, forceGC } from "./helpers/memoryLeak.js";
+
+/** Outlive screen-summary / panel cases so a missed unlink fails the WeakRef check. */
+const introSummaryModel = new IntroModel();
+const powerSummaryModel = new PowerModel();
+const resonanceSummaryModel = new ResonanceModel();
+const seriesRlcSummaryModel = new SeriesRlcModel();
+const graphPlotA: PlottableProperty = { name: "Frequency", property: new Property(1), unit: "Hz" };
+const graphPlotB: PlottableProperty = { name: "Current", property: new Property(0.2), unit: "A" };
+const graphXProperty = new Property(graphPlotA);
+const graphYProperty = new Property(graphPlotB);
 
 function createAndDisposeTimeModel(): WeakRef<object> {
   const model = new TimeModel();
@@ -407,4 +422,29 @@ describeDisposalLeaks([
   { name: "CircuitDiagramNode", create: () => new CircuitDiagramNode() },
   { name: "InductorNode", create: () => new InductorNode() },
   { name: "ResistorNode", create: () => new ResistorNode() },
+  {
+    name: "IntroScreenSummaryContent",
+    create: () => new IntroScreenSummaryContent(introSummaryModel),
+    keepAlive: () => [introSummaryModel],
+  },
+  {
+    name: "PowerScreenSummaryContent",
+    create: () => new PowerScreenSummaryContent(powerSummaryModel),
+    keepAlive: () => [powerSummaryModel],
+  },
+  {
+    name: "ResonanceScreenSummaryContent",
+    create: () => new ResonanceScreenSummaryContent(resonanceSummaryModel),
+    keepAlive: () => [resonanceSummaryModel],
+  },
+  {
+    name: "SeriesRlcScreenSummaryContent",
+    create: () => new SeriesRlcScreenSummaryContent(seriesRlcSummaryModel),
+    keepAlive: () => [seriesRlcSummaryModel],
+  },
+  {
+    name: "GraphControlsPanel",
+    create: () => new GraphControlsPanel([graphPlotA, graphPlotB], graphXProperty, graphYProperty, 300),
+    keepAlive: () => [graphXProperty, graphYProperty, graphPlotA.property, graphPlotB.property],
+  },
 ]);

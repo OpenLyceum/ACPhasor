@@ -350,6 +350,7 @@ state and add `accessibleName`s to every interactive node. Full convention and c
 
 ## Compliance carve-outs
 
+- `memory-leak:GraphInteractionHandler`: ChartTransform/ChartRectangle/tick/header wiring is only assembled inside `ConfigurableGraph`, which already dispose-chains the handler.
 - `.github/workflows/ci.yml`: opts into required Knip CI after reviewing and clearing both default and production reports; retains the template workflow jobs and architecture checks.
 
 Baton's compliance check passes. Other documented deviations:
