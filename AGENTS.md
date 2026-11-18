@@ -354,12 +354,6 @@ state and add `accessibleName`s to every interactive node. Full convention and c
 
 Baton's compliance check passes. Other documented deviations:
 
-- **IEC resistor band colors in `src/common/view/ResistorNode.ts`** (`BAND_COLORS`,
-  `GOLD_BAND_COLOR`, `SILVER_BAND_COLOR`) are fixed standard codes, not themeable UI chrome.
-  Putting them in `*Colors.ts` would imply projector remapping that would misrepresent the
-  physical color code. The compliance script flags them as possible hardcoded colors; that
-  warning is expected.
-
 - **Math-notation axis labels are not localized.** `PhasorDiagramNode`'s `"Re"` / `"Im"`,
   `WaveformNode`'s `"t (s)"` and `FrequencyResponseNode`'s `"f (Hz)"` are quantity symbols
   and SI units, the same notation as the `"V"` / `"I"` / `"V<sub>R</sub>"` phasor labels
