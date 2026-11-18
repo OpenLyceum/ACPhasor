@@ -69,7 +69,8 @@ export class ACSourceModel {
    * {@link advanceDrivePhase}; the rotating dials and scopes read this instead
    * of ω·t so a frequency change does not discontinuity the signal.
    */
-  public readonly drivePhaseProperty: NumberProperty;
+  public readonly drivePhaseProperty: TReadOnlyProperty<number>;
+  private readonly _drivePhaseProperty: NumberProperty;
 
   /** Angular frequency ω = 2πf (rad/s), derived from {@link frequencyProperty}. */
   public readonly angularFrequencyProperty: TReadOnlyProperty<number>;
@@ -101,7 +102,8 @@ export class ACSourceModel {
       units: "Hz",
     });
 
-    this.drivePhaseProperty = new NumberProperty(0);
+    this._drivePhaseProperty = new NumberProperty(0);
+    this.drivePhaseProperty = this._drivePhaseProperty;
 
     this.angularFrequencyProperty = new DerivedProperty(
       [this.frequencyProperty],
@@ -120,7 +122,7 @@ export class ACSourceModel {
    * (including speed scaling and step-forward), so Θ stays locked to the playhead.
    */
   public advanceDrivePhase(dt: number): void {
-    this.drivePhaseProperty.value += this.angularFrequencyProperty.value * dt;
+    this._drivePhaseProperty.value += this.angularFrequencyProperty.value * dt;
   }
 
   /**
@@ -143,13 +145,13 @@ export class ACSourceModel {
   public reset(): void {
     this.amplitudeProperty.reset();
     this.frequencyProperty.reset();
-    this.drivePhaseProperty.reset();
+    this._drivePhaseProperty.reset();
   }
 
   public dispose(): void {
     this.voltagePhasorProperty.dispose();
     this.angularFrequencyProperty.dispose();
-    this.drivePhaseProperty.dispose();
+    this._drivePhaseProperty.dispose();
     this.amplitudeProperty.dispose();
     this.frequencyProperty.dispose();
   }
