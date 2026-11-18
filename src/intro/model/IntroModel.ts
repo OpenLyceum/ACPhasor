@@ -23,6 +23,7 @@ import {
   INDUCTANCE_RANGE_H,
   RESISTANCE_DEFAULT_OHMS,
   RESISTANCE_RANGE_OHMS,
+  TIME_SPEED_MULTIPLIERS,
 } from "../../ACPhasorConstants.js";
 import { ACSourceModel } from "../../common/model/ACSourceModel.js";
 import { type CircuitElementType, elementImpedance } from "../../common/model/Impedance.js";
@@ -36,7 +37,7 @@ export class IntroModel implements TModel {
   public readonly source = new ACSourceModel();
 
   /** Play/pause + elapsed time for the rotating-phasor animation (starts playing). */
-  public readonly timer = new TimeModel(true);
+  public readonly timer = new TimeModel({ initiallyPlaying: true, timeSpeedMultipliers: TIME_SPEED_MULTIPLIERS });
 
   /** Which element is currently connected. */
   public readonly elementTypeProperty = new StringUnionProperty<CircuitElementType>("resistor", {
@@ -114,7 +115,7 @@ export class IntroModel implements TModel {
    */
   public stepForward(dt: number): void {
     const before = this.timer.timeProperty.value;
-    this.timer.stepForward(dt);
+    this.timer.advance(dt);
     this.source.advanceDrivePhase(this.timer.timeProperty.value - before);
   }
 

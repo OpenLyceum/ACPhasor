@@ -31,6 +31,7 @@
 
 import { DerivedProperty, type TReadOnlyProperty } from "scenerystack/axon";
 import type { TModel } from "scenerystack/joist";
+import { TIME_SPEED_MULTIPLIERS } from "../../ACPhasorConstants.js";
 import { Phasor } from "../../common/model/Phasor.js";
 import { RlcCircuitModel } from "../../common/model/RlcCircuitModel.js";
 import { TimeModel } from "../../common/TimeModel.js";
@@ -40,7 +41,7 @@ export class PowerModel implements TModel {
   public readonly circuit = new RlcCircuitModel();
 
   /** Play/pause + elapsed time for the traces and the circuit animation. */
-  public readonly timer = new TimeModel(true);
+  public readonly timer = new TimeModel({ initiallyPlaying: true, timeSpeedMultipliers: TIME_SPEED_MULTIPLIERS });
 
   /**
    * Apparent power S = ½·V·I (VA) — the hypotenuse of the power triangle, and
@@ -130,7 +131,7 @@ export class PowerModel implements TModel {
    */
   public stepForward(dt: number): void {
     const before = this.timer.timeProperty.value;
-    this.timer.stepForward(dt);
+    this.timer.advance(dt);
     this.circuit.source.advanceDrivePhase(this.timer.timeProperty.value - before);
   }
 

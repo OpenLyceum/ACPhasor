@@ -16,6 +16,7 @@
  */
 
 import { Range } from "scenerystack/dot";
+import { TimeSpeed } from "scenerystack/scenery-phet";
 import ACPhasorNamespace from "./ACPhasorNamespace.js";
 
 // ── Layout / chrome (screen pixels) ───────────────────────────────────────────
@@ -208,7 +209,15 @@ export const POWER_SCOPE_SIZE = { width: 335, height: 108 };
 /** Half-extent of the Power screen's power triangle, in view pixels. */
 export const POWER_TRIANGLE_DIAL_VIEW_RADIUS = 78;
 
+/** Selectable playback speeds in display order → simulation seconds per wall-clock second. */
+export const TIME_SPEED_MULTIPLIERS: ReadonlyMap<TimeSpeed, number> = new Map([
+  [TimeSpeed.FAST, 2],
+  [TimeSpeed.NORMAL, 1],
+  [TimeSpeed.SLOW, 0.25],
+]);
+
 ACPhasorNamespace.register("ACPhasorConstants", {
+  TIME_SPEED_MULTIPLIERS,
   SCREEN_VIEW_MARGIN,
   PANEL_CORNER_RADIUS,
   AC_AMPLITUDE_DEFAULT_V,

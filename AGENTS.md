@@ -68,7 +68,7 @@ For simulations with animation, compose `TimeModel` into your screen model:
 import { TimeModel } from "../../common/TimeModel.js";
 
 export class MyModel implements TModel {
-  public readonly timer = new TimeModel();   // starts paused; pass true to auto-play
+  public readonly timer = new TimeModel();   // starts paused; { initiallyPlaying: true } to auto-play
 
   public step(dt: number): void {
     this.timer.step(dt);
@@ -80,7 +80,7 @@ export class MyModel implements TModel {
 
 Wire the view to `TimeControlNode` from `scenerystack/scenery-phet` binding on
 `model.timer.isPlayingProperty`. Give its step-forward button
-`listener: () => model.timer.stepForward(1 / 60)` — `step()` ignores dt while paused,
+`listener: () => model.stepForward(1 / 60)` (which calls `timer.advance(dt)`) — `step()` ignores dt while paused,
 which is exactly when that button is pressed.
 
 ### ACPhasorButtonOptions

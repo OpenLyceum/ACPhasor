@@ -19,7 +19,7 @@ describe("TimeModel", () => {
   });
 
   it("can start playing when constructed with initiallyPlaying", () => {
-    const model = new TimeModel(true);
+    const model = new TimeModel({ initiallyPlaying: true });
     expect(model.isPlayingProperty.value).toBe(true);
     model.dispose();
   });
@@ -32,17 +32,17 @@ describe("TimeModel", () => {
   });
 
   it("accumulates time while playing", () => {
-    const model = new TimeModel(true);
+    const model = new TimeModel({ initiallyPlaying: true });
     model.step(0.5);
     model.step(0.25);
     expect(model.timeProperty.value).toBeCloseTo(0.75);
     model.dispose();
   });
 
-  it("stepForward() advances time even while paused", () => {
+  it("advance() moves time even while paused", () => {
     const model = new TimeModel();
-    model.stepForward(1 / 60);
-    model.stepForward(1 / 60);
+    model.advance(1 / 60);
+    model.advance(1 / 60);
     expect(model.timeProperty.value).toBeCloseTo(2 / 60);
     model.dispose();
   });

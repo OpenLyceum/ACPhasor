@@ -49,7 +49,6 @@ import {
 } from "../../common/ACPhasorButtonOptions.js";
 import { CAPTION_FONT, SMALL_CAPTION_FONT } from "../../common/ACPhasorFonts.js";
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
-import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
 import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
 import { ACPhasorReadout } from "../../common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
@@ -385,7 +384,7 @@ export class PowerScreenView extends ScreenView {
     // ── Time control + reset ────────────────────────────────────────────────
     const timeControl = new TimeControlNode(model.timer.isPlayingProperty, {
       timeSpeedProperty: model.timer.timeSpeedProperty,
-      timeSpeeds: DEFAULT_TIME_SPEEDS,
+      timeSpeeds: [...model.timer.timeSpeeds],
       ...TIME_CONTROL_SPEED_RADIO_OPTIONS,
       playPauseStepButtonOptions: {
         ...FLAT_PLAY_PAUSE_STEP_BUTTON_OPTIONS,

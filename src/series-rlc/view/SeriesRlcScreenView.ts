@@ -45,7 +45,6 @@ import {
 import { BOLD_CAPTION_FONT, CAPTION_FONT } from "../../common/ACPhasorFonts.js";
 import { ACPhasorPanel } from "../../common/ACPhasorPanel.js";
 import { Phasor } from "../../common/model/Phasor.js";
-import { DEFAULT_TIME_SPEEDS } from "../../common/TimeModel.js";
 import { ACPhasorNumberControl } from "../../common/view/ACPhasorNumberControl.js";
 import { ACPhasorReadout } from "../../common/view/ACPhasorReadout.js";
 import { CircuitDiagramNode } from "../../common/view/CircuitDiagramNode.js";
@@ -424,7 +423,7 @@ export class SeriesRlcScreenView extends ScreenView {
     // ── Time control + reset ────────────────────────────────────────────────
     const timeControl = new TimeControlNode(model.timer.isPlayingProperty, {
       timeSpeedProperty: model.timer.timeSpeedProperty,
-      timeSpeeds: DEFAULT_TIME_SPEEDS,
+      timeSpeeds: [...model.timer.timeSpeeds],
       ...TIME_CONTROL_SPEED_RADIO_OPTIONS,
       playPauseStepButtonOptions: {
         ...FLAT_PLAY_PAUSE_STEP_BUTTON_OPTIONS,

@@ -18,6 +18,7 @@
 import type { TReadOnlyProperty } from "scenerystack/axon";
 import type { Complex } from "scenerystack/dot";
 import type { TModel } from "scenerystack/joist";
+import { TIME_SPEED_MULTIPLIERS } from "../../ACPhasorConstants.js";
 import type { Phasor } from "../../common/model/Phasor.js";
 import { RlcCircuitModel } from "../../common/model/RlcCircuitModel.js";
 import { TimeModel } from "../../common/TimeModel.js";
@@ -27,7 +28,7 @@ export class SeriesRlcModel implements TModel {
   public readonly circuit = new RlcCircuitModel();
 
   /** Play/pause + elapsed time for the rotating phasors (starts playing). */
-  public readonly timer = new TimeModel(true);
+  public readonly timer = new TimeModel({ initiallyPlaying: true, timeSpeedMultipliers: TIME_SPEED_MULTIPLIERS });
 
   /** The sinusoidal voltage source driving the series circuit. */
   public readonly source = this.circuit.source;
@@ -88,7 +89,7 @@ export class SeriesRlcModel implements TModel {
    */
   public stepForward(dt: number): void {
     const before = this.timer.timeProperty.value;
-    this.timer.stepForward(dt);
+    this.timer.advance(dt);
     this.source.advanceDrivePhase(this.timer.timeProperty.value - before);
   }
 
