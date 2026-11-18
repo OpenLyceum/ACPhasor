@@ -154,6 +154,8 @@
       "panRight": "Pan right",
       "panUp": "Pan up",
       "panDown": "Pan down",
+      "pan": "Pan graph",
+      "panHelp": "Use the arrow keys to pan the plotted data. Hold Shift for smaller steps.",
       "move": "Move graph",
       "moveHelp": "Use the arrow keys to move the graph around the screen.",
       "resize": "Resize graph",

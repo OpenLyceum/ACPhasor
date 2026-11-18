@@ -284,8 +284,11 @@ export class GraphInteractionHandler {
     this.chartRectangle.cursor = "move";
 
     // Keyboard pan: arrow keys translate the chart model ranges.
+    const graphA11y = StringManager.getInstance().getGraphA11yStrings();
     this.chartRectangle.focusable = true;
     this.chartRectangle.tagName = "div";
+    this.chartRectangle.accessibleName = graphA11y.panStringProperty;
+    this.chartRectangle.accessibleHelpText = graphA11y.panHelpStringProperty;
   }
 
   /**

@@ -154,6 +154,8 @@
       "panRight": "Desplazar a la derecha",
       "panUp": "Desplazar hacia arriba",
       "panDown": "Desplazar hacia abajo",
+      "pan": "Desplazar la gráfica",
+      "panHelp": "Usa las teclas de flecha para desplazar los datos de la gráfica. Mantén Mayús para pasos más pequeños.",
       "move": "Mover gráfica",
       "moveHelp": "Usa las teclas de flecha para mover la gráfica por la pantalla.",
       "resize": "Cambiar tamaño de la gráfica",

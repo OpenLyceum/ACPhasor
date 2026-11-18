@@ -154,6 +154,8 @@
       "panRight": "Décaler à droite",
       "panUp": "Décaler vers le haut",
       "panDown": "Décaler vers le bas",
+      "pan": "Faire défiler le graphique",
+      "panHelp": "Utilisez les flèches pour faire défiler les données du graphique. Maintenez Maj pour des pas plus petits.",
       "move": "Déplacer le graphique",
       "moveHelp": "Utilisez les flèches pour déplacer le graphique sur l'écran.",
       "resize": "Redimensionner le graphique",
