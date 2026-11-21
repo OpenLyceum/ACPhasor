@@ -1,7 +1,8 @@
 # Implementation Notes - AC Phasor
 
-An AC phasor simulation with resistor (R), inductor (L), and capacitor (C). The first
-two screens are built; the last two are still shells.
+An AC phasor simulation with resistor (R), inductor (L), and capacitor (C) across
+four screens: Intro, Series RLC, Resonance, and Power. Screens 2–4 share
+`RlcCircuitModel` for the series loop.
 
 ## Architecture Overview
 
@@ -13,24 +14,30 @@ main.ts
   ├─ SeriesRlcScreen          (series RLC + voltage / impedance triangles)
   │    ├─ SeriesRlcModel
   │    └─ SeriesRlcScreenView
-  ├─ ResonanceScreen          (frequency sweep + resonance-peak curves)   ← stub
+  ├─ ResonanceScreen          (frequency sweep + resonance-peak curves)
   │    ├─ ResonanceModel
   │    └─ ResonanceScreenView
-  └─ PowerScreen              (p(t) = v·i, real/reactive power, power factor) ← stub
+  └─ PowerScreen              (p(t) = v·i, real/reactive power, power factor)
        ├─ PowerModel
        └─ PowerScreenView
 
 src/common/model/
   ├─ Phasor.ts                immutable A·cos(ωt+φ) over dot's Complex
   ├─ Impedance.ts             Z_R / Z_L / Z_C, series and resonance helpers
-  └─ ACSourceModel.ts         composable sinusoidal source
+  ├─ ACSourceModel.ts         composable sinusoidal source
+  └─ RlcCircuitModel.ts       series RLC loop shared by screens 2–4
+                              (element voltages, Z, I, φ, f₀, Q, half-power band,
+                               off-frequency currentAmplitudeAt / phaseAt)
 
 src/common/view/
   ├─ PhasorDiagramNode.ts     complex-plane backdrop; supplies the transform
   ├─ PhasorNode.ts            one arrow, with optional free tail and projection line
   ├─ PhasorChainNode.ts       an ordered set of phasors, head-to-tail or from the origin
   ├─ PhaseArcNode.ts          the labelled wedge between two angles
-  ├─ WaveformNode.ts          multi-trace, dual-axis oscilloscope with a playhead
+  ├─ WaveformNode.ts          multi-trace, dual-axis oscilloscope with a playhead;
+                              a trace may ride a DC offset and shade to zero in two colors
+  ├─ FrequencyResponseNode.ts quantity vs. log frequency; operating-point marker,
+                              f₀ line, half-power band
   ├─ CircuitDiagramNode.ts    pictorial loop with flowing charge
   ├─ ResistorNode / InductorNode / CapacitorNode / ACSourceNode
   ├─ CircuitSymbols.ts        schematic R / L / C glyphs
@@ -53,8 +60,15 @@ physics; the model never imports scenery.
 |---|---|---|
 | Intro | Pick R, L, or C; rotating V/I phasor clock with the phase angle marked and each tip projected onto the real axis, beside a dual-trace v(t)/i(t) scope | Built |
 | Series RLC | Rotating voltage triangle and the static impedance triangle it is similar to, switchable between head-to-tail and common-origin, plus a scope and a resonance callout | Built |
-| Resonance | Same RLC circuit swept in frequency; impedance- and current-vs-frequency curves | Stub |
-| Power | p(t) = v(t)·i(t) over a cycle; average real power vs. oscillating reactive component | Stub |
+| Resonance | Same RLC circuit across the frequency dial: stacked \|I\| and φ vs. log f (`FrequencyResponseNode`), f₀ and half-power band, impedance triangle, logarithmic auto-sweep (`isSweepingProperty`) | Built |
+| Power | Dual scopes for v/i and shaded p(t)=v·i (2ω swing on a P offset), power triangle P+jQ=S via `PhasorChainNode`, power-factor readout | Built |
+
+Resonance opens on dedicated element defaults (`RESONANCE_SCREEN_*` in
+`ACPhasorConstants.ts`) so Q is high enough for a visible peak. The sweep reads
+progress back out of the frequency Property (log travel over
+`FREQUENCY_SWEEP_DURATION_S`), so grabbing the slider mid-sweep continues from
+wherever it was left. Power derives P, Q, S, and cos φ from the shared circuit’s
+peak V, I, and φ; amplitudes are peak throughout, hence the factors of ½.
 
 ## Invariants worth preserving
 
@@ -88,8 +102,7 @@ Breaking any of them shows up as the whole screen jittering once per cycle.
 
 ## Next steps
 
-1. Build the Resonance screen on the existing `Impedance` helpers; it will need
-   admittance and Q-factor additions there.
-2. Build the Power screen. `WaveformNode`'s multi-trace support covers most of what
-   p(t) = v·i needs; shaded regions under a trace do not exist yet.
-3. Preferences → Simulation is hidden until the sim has real preferences; add preferences model/node hooks when needed.
+1. Preferences → Simulation is hidden until the sim has real preferences; add preferences
+   model/node hooks when needed.
+2. Optional: shaded regions under a `WaveformNode` trace beyond the two-color-to-zero
+   lobes already used on the Power screen.
