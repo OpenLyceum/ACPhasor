@@ -217,31 +217,31 @@ export class PowerScreenView extends ScreenView {
       [model.apparentPowerPhasorProperty],
       (apparent) => NORMALIZATION_TARGET / Math.max(apparent.amplitude, 1e-6),
     );
-    const scaledReal = new DerivedProperty(
+    const scaledRealProperty = new DerivedProperty(
       [model.realPowerPhasorProperty, scaleProperty],
       (phasor, scale) => phasor.scaled(scale),
       { valueComparisonStrategy: "equalsFunction" },
     );
-    const scaledReactive = new DerivedProperty(
+    const scaledReactiveProperty = new DerivedProperty(
       [model.reactivePowerPhasorProperty, scaleProperty],
       (phasor, scale) => phasor.scaled(scale),
       { valueComparisonStrategy: "equalsFunction" },
     );
-    const scaledApparent = new DerivedProperty(
+    const scaledApparentProperty = new DerivedProperty(
       [model.apparentPowerPhasorProperty, scaleProperty],
       (phasor, scale) => phasor.scaled(scale),
       { valueComparisonStrategy: "equalsFunction" },
     );
-    this.disposables.push(scaleProperty, scaledReal, scaledReactive, scaledApparent);
+    this.disposables.push(scaleProperty, scaledRealProperty, scaledReactiveProperty, scaledApparentProperty);
 
     const powerChain = new PhasorChainNode(
       [
-        { property: scaledReal, fill: ACPhasorColors.resistorColorProperty, label: "P" },
-        { property: scaledReactive, fill: ACPhasorColors.inductorColorProperty, label: "Q" },
+        { property: scaledRealProperty, fill: ACPhasorColors.resistorColorProperty, label: "P" },
+        { property: scaledReactiveProperty, fill: ACPhasorColors.inductorColorProperty, label: "Q" },
       ],
       triangleDiagram.modelViewTransform,
       {
-        resultant: { property: scaledApparent, fill: ACPhasorColors.impedanceColorProperty, label: "S" },
+        resultant: { property: scaledApparentProperty, fill: ACPhasorColors.impedanceColorProperty, label: "S" },
         labelSides: true,
       },
     );
@@ -249,8 +249,8 @@ export class PowerScreenView extends ScreenView {
     // The angle between P and S is φ — the same φ as the impedance triangle's,
     // and the one whose cosine is the power factor.
     const powerPhaseArc = new PhaseArcNode(
-      new DerivedProperty([scaledApparent], () => 0),
-      new DerivedProperty([scaledApparent], (apparent) => apparent.phase),
+      new DerivedProperty([scaledApparentProperty], () => 0),
+      new DerivedProperty([scaledApparentProperty], (apparent) => apparent.phase),
       triangleDiagram.modelViewTransform,
       { modelRadius: PHASE_ARC_RADIUS, stroke: ACPhasorColors.impedanceColorProperty },
     );
@@ -267,8 +267,8 @@ export class PowerScreenView extends ScreenView {
     triangleColumn.top = SCREEN_VIEW_MARGIN + 4;
 
     // ── Readouts ────────────────────────────────────────────────────────────
-    const phaseDegrees = new DerivedProperty([circuit.phaseProperty], (phase) => (phase * 180) / Math.PI);
-    this.disposables.push(phaseDegrees);
+    const phaseDegreesProperty = new DerivedProperty([circuit.phaseProperty], (phase) => (phase * 180) / Math.PI);
+    this.disposables.push(phaseDegreesProperty);
 
     const readoutRows = [
       new ACPhasorReadout(
@@ -301,7 +301,7 @@ export class PowerScreenView extends ScreenView {
       ),
       new ACPhasorReadout(
         labels.phaseStringProperty,
-        phaseDegrees,
+        phaseDegreesProperty,
         labels.degreesPatternStringProperty,
         new Range(-90, 90),
         0,

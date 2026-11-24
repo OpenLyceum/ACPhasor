@@ -35,7 +35,7 @@
  */
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
-import { Bounds2, Dimension2, type Range, Vector2 } from "scenerystack/dot";
+import { Bounds2, Dimension2, type Range, roundSymmetric, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Node, Path, Rectangle, Text } from "scenerystack/scenery";
@@ -263,7 +263,7 @@ export class InductorNode extends CircuitElementNode {
       const windingListener = (inductance: number): void => {
         const fraction = Math.max(0, Math.min(1, (inductance - range.min) / Math.max(range.getLength(), 1e-9)));
         // Turns scale with √L so the low end of the range still shows a change.
-        this.setTurns(Math.round(options.minTurns + Math.sqrt(fraction) * (options.maxTurns - options.minTurns)));
+        this.setTurns(roundSymmetric(options.minTurns + Math.sqrt(fraction) * (options.maxTurns - options.minTurns)));
       };
       inductanceProperty.link(windingListener);
       this.unlinkInductance = () => inductanceProperty.unlink(windingListener);
