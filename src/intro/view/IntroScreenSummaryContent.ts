@@ -17,7 +17,7 @@ export class IntroScreenSummaryContent extends ScreenSummaryContent {
   public constructor(model: IntroModel) {
     const a11y = StringManager.getInstance().getIntroA11yStrings();
 
-    const currentDetails = new DerivedProperty(
+    const currentDetailsProperty = new DerivedProperty(
       [
         model.elementTypeProperty,
         a11y.currentDetails.resistorStringProperty,
@@ -31,10 +31,10 @@ export class IntroScreenSummaryContent extends ScreenSummaryContent {
     super({
       playAreaContent: a11y.screenSummary.playAreaStringProperty,
       controlAreaContent: a11y.screenSummary.controlAreaStringProperty,
-      currentDetailsContent: currentDetails,
+      currentDetailsContent: currentDetailsProperty,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
-    this.currentDetailsProperty = currentDetails;
+    this.currentDetailsProperty = currentDetailsProperty;
   }
 
   public override dispose(): void {

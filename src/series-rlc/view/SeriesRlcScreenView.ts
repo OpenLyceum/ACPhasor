@@ -361,8 +361,11 @@ export class SeriesRlcScreenView extends ScreenView {
     controlPanel.top = SCREEN_VIEW_MARGIN;
 
     // ── Readout panel ───────────────────────────────────────────────────────
-    const impedanceMagnitude = new DerivedProperty([model.impedanceProperty], (impedance) => impedance.magnitude);
-    const phaseDegrees = new DerivedProperty([model.phaseProperty], (phase) => (phase * 180) / Math.PI);
+    const impedanceMagnitudeReadoutProperty = new DerivedProperty(
+      [model.impedanceProperty],
+      (impedance) => impedance.magnitude,
+    );
+    const phaseDegreesReadoutProperty = new DerivedProperty([model.phaseProperty], (phase) => (phase * 180) / Math.PI);
 
     // The badge confirms what the diagrams already show — at resonance the
     // reactive phasors cancel and both triangles collapse onto a flat line.
@@ -375,7 +378,7 @@ export class SeriesRlcScreenView extends ScreenView {
     const readoutRows = [
       new ACPhasorReadout(
         labels.impedanceStringProperty,
-        impedanceMagnitude,
+        impedanceMagnitudeReadoutProperty,
         labels.ohmsPatternStringProperty,
         new Range(0, 1000),
         1,
@@ -389,7 +392,7 @@ export class SeriesRlcScreenView extends ScreenView {
       ),
       new ACPhasorReadout(
         labels.phaseStringProperty,
-        phaseDegrees,
+        phaseDegreesReadoutProperty,
         labels.degreesPatternStringProperty,
         new Range(-90, 90),
         0,
