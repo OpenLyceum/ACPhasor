@@ -159,38 +159,43 @@ export class ResonanceScreenView extends ScreenView {
       (impedance) => NORMALIZATION_TARGET / Math.max(impedance.amplitude, 1e-6),
     );
 
-    const scaledResistance = new DerivedProperty(
+    const scaledResistanceProperty = new DerivedProperty(
       [model.resistancePhasorProperty, chainScaleProperty],
       (phasor, scale) => phasor.scaled(scale),
       { valueComparisonStrategy: "equalsFunction" },
     );
-    const scaledReactance = new DerivedProperty(
+    const scaledReactanceProperty = new DerivedProperty(
       [model.reactancePhasorProperty, chainScaleProperty],
       (phasor, scale) => phasor.scaled(scale),
       { valueComparisonStrategy: "equalsFunction" },
     );
-    const scaledImpedance = new DerivedProperty(
+    const scaledImpedanceProperty = new DerivedProperty(
       [model.impedancePhasorProperty, chainScaleProperty],
       (phasor, scale) => phasor.scaled(scale),
       { valueComparisonStrategy: "equalsFunction" },
     );
-    this.disposables.push(chainScaleProperty, scaledResistance, scaledReactance, scaledImpedance);
+    this.disposables.push(
+      chainScaleProperty,
+      scaledResistanceProperty,
+      scaledReactanceProperty,
+      scaledImpedanceProperty,
+    );
 
     const impedanceChain = new PhasorChainNode(
       [
-        { property: scaledResistance, fill: ACPhasorColors.resistorColorProperty, label: "R" },
-        { property: scaledReactance, fill: ACPhasorColors.inductorColorProperty, label: "X" },
+        { property: scaledResistanceProperty, fill: ACPhasorColors.resistorColorProperty, label: "R" },
+        { property: scaledReactanceProperty, fill: ACPhasorColors.inductorColorProperty, label: "X" },
       ],
       impedanceDiagram.modelViewTransform,
       {
-        resultant: { property: scaledImpedance, fill: ACPhasorColors.impedanceColorProperty, label: "Z" },
+        resultant: { property: scaledImpedanceProperty, fill: ACPhasorColors.impedanceColorProperty, label: "Z" },
         labelSides: true,
       },
     );
     impedanceDiagram.addChild(impedanceChain);
     const impedancePhaseArc = new PhaseArcNode(
-      new DerivedProperty([scaledImpedance], () => 0),
-      new DerivedProperty([scaledImpedance], (impedance) => impedance.phase),
+      new DerivedProperty([scaledImpedanceProperty], () => 0),
+      new DerivedProperty([scaledImpedanceProperty], (impedance) => impedance.phase),
       impedanceDiagram.modelViewTransform,
       { modelRadius: PHASE_ARC_RADIUS, stroke: ACPhasorColors.impedanceColorProperty },
     );
@@ -203,9 +208,12 @@ export class ResonanceScreenView extends ScreenView {
     });
 
     // ── Readouts ────────────────────────────────────────────────────────────
-    const phaseDegrees = new DerivedProperty([model.phaseProperty], (phase) => (phase * 180) / Math.PI);
-    const impedanceMagnitude = new DerivedProperty([model.impedanceProperty], (impedance) => impedance.magnitude);
-    this.disposables.push(phaseDegrees, impedanceMagnitude);
+    const phaseDegreesProperty = new DerivedProperty([model.phaseProperty], (phase) => (phase * 180) / Math.PI);
+    const impedanceMagnitudeProperty = new DerivedProperty(
+      [model.impedanceProperty],
+      (impedance) => impedance.magnitude,
+    );
+    this.disposables.push(phaseDegreesProperty, impedanceMagnitudeProperty);
 
     const resonanceBadge = new Text(labels.atResonanceStringProperty, {
       font: BOLD_CAPTION_FONT,
@@ -237,7 +245,7 @@ export class ResonanceScreenView extends ScreenView {
       ),
       new ACPhasorReadout(
         labels.impedanceStringProperty,
-        impedanceMagnitude,
+        impedanceMagnitudeProperty,
         labels.ohmsPatternStringProperty,
         new Range(0, 10000),
         1,
@@ -251,7 +259,7 @@ export class ResonanceScreenView extends ScreenView {
       ),
       new ACPhasorReadout(
         labels.phaseStringProperty,
-        phaseDegrees,
+        phaseDegreesProperty,
         labels.degreesPatternStringProperty,
         new Range(-90, 90),
         0,

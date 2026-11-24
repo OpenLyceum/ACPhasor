@@ -19,7 +19,7 @@ export class SeriesRlcScreenSummaryContent extends ScreenSummaryContent {
 
     // The model decides what counts as resonance, so this sentence and the
     // on-screen badge can never disagree about it.
-    const currentDetails = new DerivedProperty(
+    const currentDetailsProperty = new DerivedProperty(
       [
         model.reactanceProperty,
         model.isAtResonanceProperty,
@@ -38,10 +38,10 @@ export class SeriesRlcScreenSummaryContent extends ScreenSummaryContent {
     super({
       playAreaContent: a11y.screenSummary.playAreaStringProperty,
       controlAreaContent: a11y.screenSummary.controlAreaStringProperty,
-      currentDetailsContent: currentDetails,
+      currentDetailsContent: currentDetailsProperty,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
-    this.currentDetailsProperty = currentDetails;
+    this.currentDetailsProperty = currentDetailsProperty;
   }
 
   public override dispose(): void {

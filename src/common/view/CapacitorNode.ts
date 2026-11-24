@@ -25,7 +25,7 @@
  *   capacitor.setChargeFraction( 0.8 );      // +80% charge: top plate positive
  */
 
-import { Dimension2, Vector2 } from "scenerystack/dot";
+import { Dimension2, roundSymmetric, Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Node, Path, Text } from "scenerystack/scenery";
@@ -239,7 +239,7 @@ export class CapacitorNode extends CircuitElementNode {
       return;
     }
     this.chargeMagnitude = magnitude;
-    this.chargeCount = Math.round(magnitude * this.maxCharges);
+    this.chargeCount = roundSymmetric(magnitude * this.maxCharges);
     this.topPlatePositive = positive;
     this.updateCharges();
   }
@@ -357,7 +357,7 @@ export class CapacitorNode extends CircuitElementNode {
     }
 
     const aspect = this.plateWidth / Math.max(depthLength, 1);
-    const columns = Math.max(1, Math.min(count, columnLimit, Math.round(Math.sqrt(count * aspect))));
+    const columns = Math.max(1, Math.min(count, columnLimit, roundSymmetric(Math.sqrt(count * aspect))));
     const rows = Math.ceil(count / columns);
 
     const halfWidth = this.plateWidth / 2;

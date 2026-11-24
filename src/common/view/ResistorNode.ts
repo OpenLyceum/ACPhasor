@@ -19,6 +19,7 @@
  */
 
 import type { TReadOnlyProperty } from "scenerystack/axon";
+import { roundSymmetric } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { type EmptySelfOptions, optionize } from "scenerystack/phet-core";
 import { Node, Path, Rectangle, type TColor, Text } from "scenerystack/scenery";
@@ -90,11 +91,11 @@ function bandColorsFor(resistance: number): [BandColor, BandColor, BandColor] {
     return [digitColor(0), digitColor(0), digitColor(0)];
   }
   const decade = Math.floor(Math.log10(resistance));
-  let twoDigits = Math.round(resistance / 10 ** (decade - 1));
+  let twoDigits = roundSymmetric(resistance / 10 ** (decade - 1));
   let exponent = decade - 1;
   if (twoDigits >= 100) {
     // Rounding pushed us into the next decade (e.g. 99.6 → 100).
-    twoDigits = Math.round(twoDigits / 10);
+    twoDigits = roundSymmetric(twoDigits / 10);
     exponent += 1;
   }
   return [digitColor(Math.floor(twoDigits / 10)), digitColor(twoDigits % 10), multiplierColor(exponent)];

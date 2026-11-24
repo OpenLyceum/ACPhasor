@@ -315,23 +315,26 @@ export class IntroScreenView extends ScreenView {
     controlPanel.top = SCREEN_VIEW_MARGIN;
 
     // ── Readout panel: what the selected element does to the current ────────
-    const impedanceMagnitude = new DerivedProperty([model.impedanceProperty], (impedance) => impedance.magnitude);
-    const phaseDegrees = new DerivedProperty(
+    const impedanceMagnitudeProperty = new DerivedProperty(
+      [model.impedanceProperty],
+      (impedance) => impedance.magnitude,
+    );
+    const phaseDegreesProperty = new DerivedProperty(
       [model.phaseDifferenceProperty],
       (phaseDifference) => (phaseDifference * 180) / Math.PI,
     );
-    this.disposables.push(impedanceMagnitude, phaseDegrees, this.circuit);
+    this.disposables.push(impedanceMagnitudeProperty, phaseDegreesProperty, this.circuit);
     const readoutRows = [
       new ACPhasorReadout(
         labels.impedanceStringProperty,
-        impedanceMagnitude,
+        impedanceMagnitudeProperty,
         labels.ohmsPatternStringProperty,
         new Range(0, 10000),
         1,
       ),
       new ACPhasorReadout(
         labels.phaseStringProperty,
-        phaseDegrees,
+        phaseDegreesProperty,
         labels.degreesPatternStringProperty,
         new Range(-90, 90),
         0,

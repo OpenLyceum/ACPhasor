@@ -20,7 +20,7 @@ export class ResonanceScreenSummaryContent extends ScreenSummaryContent {
 
     // Keyed on the phase, exactly as the "at resonance" badge is, so the
     // sentence and the badge can never disagree about where the peak is.
-    const currentDetails = new DerivedProperty(
+    const currentDetailsProperty = new DerivedProperty(
       [
         model.phaseProperty,
         model.isAtResonanceProperty,
@@ -40,10 +40,10 @@ export class ResonanceScreenSummaryContent extends ScreenSummaryContent {
     super({
       playAreaContent: a11y.screenSummary.playAreaStringProperty,
       controlAreaContent: a11y.screenSummary.controlAreaStringProperty,
-      currentDetailsContent: currentDetails,
+      currentDetailsContent: currentDetailsProperty,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
-    this.currentDetailsProperty = currentDetails;
+    this.currentDetailsProperty = currentDetailsProperty;
   }
 
   public override dispose(): void {

@@ -21,7 +21,7 @@ export class PowerScreenSummaryContent extends ScreenSummaryContent {
     // "Unity" is decided by the model's own resonance test rather than by a
     // second threshold on cos φ, so this sentence agrees with the rest of the
     // sim about when the reactances have cancelled.
-    const currentDetails = new DerivedProperty(
+    const currentDetailsProperty = new DerivedProperty(
       [
         model.circuit.phaseProperty,
         model.circuit.isAtResonanceProperty,
@@ -41,10 +41,10 @@ export class PowerScreenSummaryContent extends ScreenSummaryContent {
     super({
       playAreaContent: a11y.screenSummary.playAreaStringProperty,
       controlAreaContent: a11y.screenSummary.controlAreaStringProperty,
-      currentDetailsContent: currentDetails,
+      currentDetailsContent: currentDetailsProperty,
       interactionHintContent: a11y.screenSummary.interactionHintStringProperty,
     });
-    this.currentDetailsProperty = currentDetails;
+    this.currentDetailsProperty = currentDetailsProperty;
   }
 
   public override dispose(): void {
